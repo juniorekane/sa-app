@@ -45,3 +45,6 @@ build/
 *.zip
 *.tar.gz
 *.rar
+
+## local setting
+/src/main/resources/application-*.properties
