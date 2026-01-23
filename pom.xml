@@ -18,7 +18,14 @@
         <license/>
     </licenses>
     <developers>
-        <developer/>
+        <developer>
+            <name>Junior Ekane</name>
+            <email>lesageekane@gmail.com</email>
+            <url>www.jek-dev.com</url>
+            <roles>
+                <role>developper</role>
+            </roles>
+        </developer>
     </developers>
     <scm>
         <connection/>
@@ -62,6 +69,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
         </dependency>
     </dependencies>
 
