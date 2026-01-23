@@ -1,0 +1,27 @@
+# Use root/example as user/password credentials
+
+services:
+
+  db:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MARIADB_DATABASE: spring_db
+      MARIADB_USER: spring
+      MARIADB_PASSWORD: spring
+      MARIADB_ROOT_PASSWORD: test
+    ports:
+      - "3307:3306"
+    volumes:
+      - dc_test_db:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8180:8080"
+
+volumes:
+  dc_test_db:
