@@ -1,8 +1,12 @@
 package com.jekdev.com.service;
 
+import com.jekdev.com.dto.ClientRequest;
+import com.jekdev.com.dto.ClientResponse;
 import com.jekdev.com.entities.Client;
+import com.jekdev.com.mapper.ClientMapper;
 import com.jekdev.com.repositories.ClientRepository;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +21,22 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ClientService {
 
+  private final ClientMapper clientMapper;
+
   private final ClientRepository clientRepository;
 
   /**
-   * Persists a {@link Client} entity in the database and logs the creation event.
+   * Creates a new client in the database based on the provided {@link ClientRequest}. If a client with the same email
+   * already exists, the client will not be created, and a log entry will indicate that the client already exists.
+   * Otherwise, the client is saved, and a log entry is recorded with the ID of the newly created client.
    *
-   * @param client the client entity to be saved; must not be null
+   * @param clientRequest the request object containing the information of the client to be created; must not be null
    */
-  public void createClient(Client client) {
+  public void createClient(ClientRequest clientRequest) {
+    log.info("Creating client with email ({})", clientRequest.getEmail());
+
+    Client client = clientMapper.mapToClientRequestToEntity(clientRequest);
+
     if (clientRepository.findByEmail(client.getEmail()).isPresent()) {
       log.info("Client already exits");
     } else {
@@ -34,23 +46,31 @@ public class ClientService {
   }
 
   /**
-   * Retrieves a list of all {@code Client} entities from the database.
+   * Retrieves a list of all clients from the database, maps the client entities to {@link ClientResponse} objects, and
+   * returns the resulting list. Each {@link ClientResponse} contains the relevant details of a client, such as the
+   * unique identifier and email address.
    *
-   * @return a list of {@code Client} entities representing all clients in the database
+   * @return a {@link List} of {@link ClientResponse} objects representing all clients stored in the database
    */
-  public List<Client> getAllClients() {
-    return clientRepository.findAll();
+  public List<ClientResponse> getAllClients() {
+    return clientRepository.findAll().stream().map(clientMapper::mapClientEntityToClientResponse).toList();
   }
 
   /**
-   * Searches for a {@link Client} entity in the database by its unique identifier.
+   * Searches for a {@link Client} entity in the database based on the provided unique identifier. If the client is
+   * found, it is mapped to a {@link ClientResponse} object.
    *
-   * @param id the unique identifier of the {@code Client} to be searched; must not be null
-   * @return an {@code Optional} containing the found {@code Client} if it exists, or an empty {@code Optional} if no
-   *     client is found
+   * @param id the unique identifier of the client to search for; must not be null
+   * @return a {@link ClientResponse} containing the client's details if the client is found
+   * @throws NoSuchElementException if no client exists with the specified ID
    */
-  public Optional<Client> searchClient(Long id) {
-    return clientRepository.findById(id);
+  public ClientResponse searchClient(Long id) {
+
+    log.info("Searching for client with id ({})", id);
+
+    Client client = clientRepository.findById(id).orElseThrow();
+
+    return clientMapper.mapClientEntityToClientResponse(client);
   }
 
   /**

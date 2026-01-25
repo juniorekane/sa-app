@@ -2,10 +2,11 @@ package com.jekdev.com.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import com.jekdev.com.dto.ClientRequest;
+import com.jekdev.com.dto.ClientResponse;
 import com.jekdev.com.entities.Client;
 import com.jekdev.com.service.ClientService;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +32,12 @@ public class ClientController {
    * Creates a new client entity in the system. This method processes a POST request with a JSON body containing client
    * details and persists the client information in the database.
    *
-   * @param client the client entity to be created; must not be null
+   * @param clientRequest the client entity to be created; must not be null
    */
   @ResponseStatus(value = HttpStatus.CREATED)
   @PostMapping(consumes = APPLICATION_JSON_VALUE)
-  public void create(@RequestBody Client client) {
-    clientService.createClient(client);
+  public void create(@RequestBody ClientRequest clientRequest) {
+    clientService.createClient(clientRequest);
   }
 
   /**
@@ -46,7 +47,7 @@ public class ClientController {
    */
   @GetMapping(value = CLIENT_LIST_PATH, produces = APPLICATION_JSON_VALUE)
   @ResponseStatus(value = HttpStatus.OK)
-  public List<Client> getClients() {
+  public List<ClientResponse> getClients() {
     return clientService.getAllClients();
   }
 
@@ -60,7 +61,7 @@ public class ClientController {
    */
   @GetMapping(value = SINGLE_ID_CLIENT_PATH, produces = APPLICATION_JSON_VALUE)
   @ResponseStatus(value = HttpStatus.OK)
-  public Optional<Client> searchClientWithID(@PathVariable Long id) {
+  public ClientResponse searchClientWithID(@PathVariable Long id) {
     return clientService.searchClient(id);
   }
 }
