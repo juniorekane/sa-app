@@ -15,6 +15,9 @@ public class ClientMapper {
   }
 
   public ClientResponse mapClientEntityToClientResponse(Client client) {
-    return new ClientResponse(client.getId(), client.getEmail());
+    if (client.getEmotions().isEmpty()) {
+      return new ClientResponse(client.getId(), client.getEmail());
+    }
+    return new ClientResponse(client.getId(), client.getEmail(), client.getEmotions());
   }
 }
