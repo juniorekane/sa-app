@@ -1,35 +1,37 @@
 package com.jekdev.com.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import static jakarta.persistence.CascadeType.MERGE;
+import static jakarta.persistence.CascadeType.PERSIST;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.jekdev.com.base.EmotionType;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class Emotion {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false)
-    private String text;
+  @Column(nullable = false)
+  @NonNull
+  private String text;
 
-    @Column(nullable = false)
-    private String type;
+  @Column(nullable = false)
+  @NonNull
+  private EmotionType type;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "client_id", nullable = false, unique = true)
-    private Client client;
+  @ManyToOne(
+      optional = false,
+      cascade = {PERSIST, MERGE})
+  @JoinColumn(name = "client_id", nullable = false)
+  @NonNull
+  @JsonBackReference
+  private Client client;
 }
