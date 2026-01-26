@@ -2,7 +2,13 @@ package com.jekdev.com.errorhandling;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -52,5 +58,33 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.CONFLICT)
   public ResponseEntity<Map<String, String>> handlePresentElementException(PresentElementException ex) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
+  }
+
+  /**
+   * Handles {@code ConstraintViolationException} thrown during validation failures within the application. This method
+   * constructs a standardized response encapsulating details about the validation error, including a timestamp, HTTP
+   * status, error type, stack trace, and error message.
+   *
+   * @param ex the {@code ConstraintViolationException} instance containing details about the validation error
+   * @return a {@code ResponseEntity} object with a 400 Bad Request status and a body containing the error response in
+   *     JSON format
+   */
+  @ExceptionHandler(value = ConstraintViolationException.class, produces = APPLICATION_JSON_VALUE)
+  public ResponseEntity<Map<String, Serializable>> handleCommonValidationErrors(ConstraintViolationException ex) {
+
+    Optional<String> message = ex.getConstraintViolations().stream().findFirst().map(ConstraintViolation::getMessage);
+    Map<String, Serializable> error =
+        Map.of(
+            "timestamp",
+            String.valueOf(LocalDateTime.now()),
+            "status",
+            400,
+            "error",
+            ex.getClass().getSimpleName(),
+            "trace",
+            Arrays.toString(ex.getStackTrace()),
+            "message",
+            message.orElse("Validation failed"));
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }
 }

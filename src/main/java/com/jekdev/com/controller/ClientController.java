@@ -4,11 +4,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.jekdev.com.dto.ClientRequest;
 import com.jekdev.com.dto.ClientResponse;
-import com.jekdev.com.entities.Client;
 import com.jekdev.com.service.ClientService;
-import java.util.List;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,46 +22,56 @@ public class ClientController {
    */
   public static final String BASE_PATH = "client";
 
+  /**
+   * A string constant representing the path segment for retrieving a list of all clients. This value is used in
+   * constructing the endpoint URL for handling HTTP GET requests that fetch all client records.
+   *
+   * <p>In the context of the {@code ClientController}, this constant specifies the relative path for the "find all
+   * clients" operation. The full endpoint URL is constructed by combining the {@code BASE_PATH} of the controller and
+   * this constant.
+   */
   public static final String CLIENT_LIST_PATH = "find_all";
 
+  /**
+   * A string constant representing the path segment for searching a single client by their unique identifier. This
+   * value defines a dynamic URL segment in the endpoint mapping for the {@code ClientController} and is used to handle
+   * HTTP GET requests where an individual client's details are retrieved based on their ID.
+   *
+   * <p>The path includes a placeholder `{id}` that must be replaced with the actual client ID during the request. The
+   * final URL path for this endpoint is constructed by combining the {@code BASE_PATH} of the controller with this
+   * constant.
+   */
   public static final String SINGLE_ID_CLIENT_PATH = "search/{id}";
 
   private final ClientService clientService;
 
   /**
-   * Creates a new client entity in the system. This method processes a POST request with a JSON body containing client
-   * details and persists the client information in the database.
+   * Creates a new client based on the provided request data. This method accepts a JSON payload representing the
+   * client's information, validates it, and attempts to create the client in the database. If the creation is
+   * successful, the method responds with an HTTP status of 201 (Created).
    *
-   * @param clientRequest the client entity to be created; must not be null
+   * @param clientRequest the request object containing the information for the client to be created; must be a valid
+   *     JSON payload and conform to the {@code ClientRequest} structure
+   * @return a {@link ResponseEntity} with an HTTP status of 201 (Created) if the client is successfully created
    */
-  @ResponseStatus(value = HttpStatus.CREATED)
   @PostMapping(consumes = APPLICATION_JSON_VALUE)
-  public void create(@RequestBody ClientRequest clientRequest) {
+  public ResponseEntity<String> create(@Valid @RequestBody ClientRequest clientRequest) {
     clientService.createClient(clientRequest);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   /**
-   * Handles the HTTP GET request for retrieving a list of all clients.
+   * Handles HTTP GET requests to search for a client by their unique identifier. This method retrieves the client's
+   * details using the provided ID and returns a JSON representation of the {@code ClientResponse}.
    *
-   * @return a list of {@code Client} entities, each representing a client in the system
-   */
-  @GetMapping(value = CLIENT_LIST_PATH, produces = APPLICATION_JSON_VALUE)
-  @ResponseStatus(value = HttpStatus.OK)
-  public List<ClientResponse> getClients() {
-    return clientService.getAllClients();
-  }
-
-  /**
-   * Searches for a {@link Client} entity based on its unique identifier. Handles an HTTP GET request and returns the
-   * client if found.
-   *
-   * @param id the unique identifier of the client; must not be null
-   * @return an {@code Optional} containing the {@code Client} entity if found, or an empty {@code Optional} if no
-   *     client exists with the specified ID
+   * @param id the unique identifier of the client to be searched; must not be null
+   * @return a {@link ResponseEntity} containing the client's information in JSON format, with an HTTP status of 200
+   *     (OK) if the client is found
    */
   @GetMapping(value = SINGLE_ID_CLIENT_PATH, produces = APPLICATION_JSON_VALUE)
   @ResponseStatus(value = HttpStatus.OK)
-  public ClientResponse searchClientWithID(@PathVariable Long id) {
-    return clientService.searchClient(id);
+  public ResponseEntity<String> searchClientWithID(@Valid @PathVariable Long id) {
+    ClientResponse clientResponse = clientService.searchClient(id);
+    return ResponseEntity.ok().body(clientResponse.toString());
   }
 }
