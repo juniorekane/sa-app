@@ -3,8 +3,10 @@ package com.jekdev.com.errorhandling;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.util.Map;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
@@ -35,19 +37,20 @@ public class GlobalExceptionHandler {
    */
   @ExceptionHandler(value = ElementNotFoundException.class, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<Map<String, String>> handleElementNotFoundException(ElementNotFoundException ex) {
-    return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
   }
 
   /**
    * Handles {@code PresentElementException} thrown within the application. This method captures the exception and
-   * constructs a standardized response containing a 400 Bad Request status and a JSON body with an error message.
+   * constructs a standardized response containing a 409-Conflict HTTP status and a JSON body with an error message.
    *
    * @param ex the {@code PresentElementException} instance containing details about the error
-   * @return a {@code ResponseEntity} object with a 400 Bad Request status and a body containing an error message in
+   * @return a {@code ResponseEntity} object with a 409-Conflict HTTP status and a body containing an error message in
    *     JSON format
    */
   @ExceptionHandler(value = PresentElementException.class, produces = APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.CONFLICT)
   public ResponseEntity<Map<String, String>> handlePresentElementException(PresentElementException ex) {
-    return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
   }
 }
