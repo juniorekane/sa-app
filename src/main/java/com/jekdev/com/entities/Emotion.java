@@ -5,6 +5,7 @@ import static jakarta.persistence.CascadeType.PERSIST;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jekdev.com.base.EmotionType;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,7 +25,7 @@ public class Emotion {
   private String text;
 
   @Column(nullable = false)
-  @NonNull
+  @Nullable
   private EmotionType type;
 
   @ManyToOne(

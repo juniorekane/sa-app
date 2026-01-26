@@ -2,6 +2,8 @@ package com.jekdev.com.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import com.jekdev.com.dto.EmotionRequest;
+import com.jekdev.com.dto.EmotionResponse;
 import com.jekdev.com.entities.Emotion;
 import com.jekdev.com.service.EmotionService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -65,7 +67,7 @@ public class EmotionController {
   @PostMapping(value = CREATE_PATH, consumes = APPLICATION_JSON_VALUE)
   @ResponseStatus(value = HttpStatus.CREATED)
   public void createEmotion(
-      @Parameter(name = "emotion", description = "the emotion to be created") @RequestBody Emotion emotion) {
+      @Parameter(name = "emotion", description = "the emotion to be created") @RequestBody EmotionRequest emotion) {
     emotionService.createEmotion(emotion);
   }
 
@@ -77,7 +79,7 @@ public class EmotionController {
    */
   @GetMapping
   @ResponseStatus(value = HttpStatus.OK, reason = "If a list of emotions exists and can be successfully returned")
-  public List<Emotion> getAllEmotions() {
+  public List<EmotionResponse> getAllEmotions() {
     return emotionService.findAllEmotion();
   }
 

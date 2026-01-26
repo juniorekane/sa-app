@@ -1,7 +1,10 @@
 package com.jekdev.com.service;
 
+import com.jekdev.com.dto.EmotionRequest;
+import com.jekdev.com.dto.EmotionResponse;
 import com.jekdev.com.entities.Client;
 import com.jekdev.com.entities.Emotion;
+import com.jekdev.com.mapper.EmotionMapper;
 import com.jekdev.com.repositories.EmotionRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
- * Service class responsible for managing {@link Emotion} entities. Provides functionality for creating and managing
- * emotion records in the database.
+ * Service class responsible for managing {@link Emotion} entities. Provides methods for creating, retrieving, and
+ * deleting emotions, while also enabling mapping between request, entity, and response representations. Utilizes {@link
+ * ClientService}, {@link EmotionMapper}, and {@link EmotionRepository} to handle emotion data.
  */
 @Service
 @Slf4j
@@ -19,16 +23,20 @@ public class EmotionService {
 
   private final ClientService clientService;
 
+  private final EmotionMapper emotionMapper;
+
   private final EmotionRepository emotionRepository;
 
   /**
-   * Persists a new {@link Emotion} entity into the database if it does not already exist. If an emotion with the same
-   * text already exists in the repository, this method logs a debug message and does not save the new emotion.
-   * Otherwise, the emotion is saved and an informational log entry is recorded with the ID of the saved emotion.
+   * Creates a new {@link Emotion} entity or retrieves an existing one. This method processes the provided {@link
+   * EmotionRequest}, mapping it to an {@link Emotion} entity, associates it with a corresponding {@link Client}, and
+   * then either saves the new entity or logs a debug message if the emotion already exists.
    *
-   * @param emotion the emotion entity to be created; must not be null and
+   * @param emotionRequest the {@link EmotionRequest} containing the details for the emotion to be created; must not be
+   *     null
    */
-  public void createEmotion(Emotion emotion) {
+  public void createEmotion(EmotionRequest emotionRequest) {
+    Emotion emotion = emotionMapper.mapEmotionRequestToEntity(emotionRequest);
     Client client = clientService.readOrCreateClient(emotion.getClient());
     emotion.setClient(client);
     if (emotionRepository.findByText(emotion.getText()).isPresent()) {
@@ -40,13 +48,14 @@ public class EmotionService {
   }
 
   /**
-   * Retrieves all {@link Emotion} entities stored in the database. This method fetches and returns a complete list of
-   * emotions, enabling access to all currently persisted emotion records.
+   * Retrieves a list of all emotion records from the database, maps each {@link Emotion} entity to a {@link
+   * EmotionResponse} object, and returns the resulting list. Each {@link EmotionResponse} object contains the relevant
+   * details about an emotion, such as its unique identifier, text, type, and associated client information.
    *
-   * @return a {@link List} of {@code Emotion} entities representing all stored emotions
+   * @return a {@link List} of {@link EmotionResponse} objects representing all emotion records stored in the database
    */
-  public List<Emotion> findAllEmotion() {
-    return emotionRepository.findAll();
+  public List<EmotionResponse> findAllEmotion() {
+    return emotionRepository.findAll().stream().map(emotionMapper::mapEmotionEntityToResponse).toList();
   }
 
   /**
