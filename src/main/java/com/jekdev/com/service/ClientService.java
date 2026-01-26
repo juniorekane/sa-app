@@ -3,10 +3,11 @@ package com.jekdev.com.service;
 import com.jekdev.com.dto.ClientRequest;
 import com.jekdev.com.dto.ClientResponse;
 import com.jekdev.com.entities.Client;
+import com.jekdev.com.errorhandling.ElementNotFoundException;
+import com.jekdev.com.errorhandling.PresentElementException;
 import com.jekdev.com.mapper.ClientMapper;
 import com.jekdev.com.repositories.ClientRepository;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,7 @@ public class ClientService {
 
     if (clientRepository.findByEmail(client.getEmail()).isPresent()) {
       log.info("Client already exits");
+      throw new PresentElementException("Client already exists. Please use a different email address.");
     } else {
       clientRepository.save(client);
       log.info("Created client with id ({})", client.getId());
@@ -53,7 +55,14 @@ public class ClientService {
    * @return a {@link List} of {@link ClientResponse} objects representing all clients stored in the database
    */
   public List<ClientResponse> getAllClients() {
-    return clientRepository.findAll().stream().map(clientMapper::mapClientEntityToClientResponse).toList();
+
+    List<Client> clientList = clientRepository.findAll();
+
+    if (clientList.isEmpty()) {
+      throw new ElementNotFoundException("No clients found, please create some clients first.");
+    }
+
+    return clientList.stream().map(clientMapper::mapClientEntityToClientResponse).toList();
   }
 
   /**
@@ -62,13 +71,13 @@ public class ClientService {
    *
    * @param id the unique identifier of the client to search for; must not be null
    * @return a {@link ClientResponse} containing the client's details if the client is found
-   * @throws NoSuchElementException if no client exists with the specified ID
+   * @throws ElementNotFoundException if no client exists with the specified ID
    */
   public ClientResponse searchClient(Long id) {
 
     log.info("Searching for client with id ({})", id);
 
-    Client client = clientRepository.findById(id).orElseThrow();
+    Client client = clientRepository.findById(id).orElseThrow(() -> new ElementNotFoundException("Client not found"));
 
     return clientMapper.mapClientEntityToClientResponse(client);
   }

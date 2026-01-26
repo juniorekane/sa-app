@@ -4,6 +4,8 @@ import com.jekdev.com.dto.EmotionRequest;
 import com.jekdev.com.dto.EmotionResponse;
 import com.jekdev.com.entities.Client;
 import com.jekdev.com.entities.Emotion;
+import com.jekdev.com.errorhandling.ElementNotFoundException;
+import com.jekdev.com.errorhandling.PresentElementException;
 import com.jekdev.com.mapper.EmotionMapper;
 import com.jekdev.com.repositories.EmotionRepository;
 import java.util.List;
@@ -41,6 +43,7 @@ public class EmotionService {
     emotion.setClient(client);
     if (emotionRepository.findByText(emotion.getText()).isPresent()) {
       log.debug("Emotion Already exists");
+      throw new PresentElementException("Emotion already exists. Please use a different text.");
     } else {
       emotionRepository.save(emotion);
       log.info("Emotion saved with id: {}", emotion.getId());
@@ -55,7 +58,14 @@ public class EmotionService {
    * @return a {@link List} of {@link EmotionResponse} objects representing all emotion records stored in the database
    */
   public List<EmotionResponse> findAllEmotion() {
-    return emotionRepository.findAll().stream().map(emotionMapper::mapEmotionEntityToResponse).toList();
+
+    log.info("Fetching all emotions");
+    List<Emotion> emotionList = emotionRepository.findAll();
+
+    if (emotionList.isEmpty()) {
+      throw new ElementNotFoundException("No emotions found, please create some emotions first.");
+    }
+    return emotionList.stream().map(emotionMapper::mapEmotionEntityToResponse).toList();
   }
 
   /**
@@ -65,6 +75,6 @@ public class EmotionService {
    * @param id the unique identifier of the {@link Emotion} to be deleted; must not be null
    */
   public void deleteEmotion(Long id) {
-    emotionRepository.deleteById(id);
+    emotionRepository.findById(id).orElseThrow(() -> new ElementNotFoundException("Emotion not found"));
   }
 }
