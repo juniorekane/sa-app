@@ -38,7 +38,7 @@ public class EmotionController {
    * referenced in the {@code @RequestMapping} annotation to define the root URL for all endpoints within the {@code
    * EmotionController}.
    */
-  public static final String BASE_PATH = "emotions";
+  public static final String BASE_PATH = "/emotions";
 
   /**
    * A string constant representing the path segment for creating a new resource. Used within controller endpoint
@@ -48,7 +48,7 @@ public class EmotionController {
    * endpoint that handles the creation of an {@code Emotion} entity. The full path is constructed using the {@code
    * BASE_PATH} of the controller and this constant, forming the endpoint URL for create operations.
    */
-  public static final String CREATE_PATH = "create";
+  public static final String CREATE_PATH = "/create";
 
   /**
    * A string constant representing the path segment for deleting an existing resource. Used within controller endpoint
@@ -61,9 +61,9 @@ public class EmotionController {
    * endpoint URL for delete operations. Example usage: DELETE request to the constructed URL will remove the
    * corresponding resource identified by the {id} path variable.
    */
-  public static final String DELETE_PATH = "delete/{id}";
+  public static final String DELETE_PATH = "/delete/{id}";
 
-  public static final String ALL_EMOTION_PATH = "all";
+  public static final String ALL_EMOTION_PATH = "/all";
 
   private final EmotionService emotionService;
 
@@ -94,9 +94,9 @@ public class EmotionController {
    *     HTTP status of 200 (OK)
    */
   @GetMapping(value = ALL_EMOTION_PATH, produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<String> getAllEmotions() {
+  public ResponseEntity<List<EmotionResponse>> getAllEmotions() {
     List<EmotionResponse> emotionResponseList = emotionService.findAllEmotion();
-    return ResponseEntity.ok().body(emotionResponseList.toString());
+    return ResponseEntity.ok().body(emotionResponseList);
   }
 
   /**

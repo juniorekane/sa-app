@@ -24,9 +24,9 @@ class ClientControllerTest {
 
   private final String CREATE_PATH = ClientController.BASE_PATH + ClientController.CREATE_PATH;
 
-  private final String CLIENT_ID = "1";
+  private final Long CLIENT_ID = 1L;
 
-  private final String SEARCH_PATH = ClientController.BASE_PATH + "/search/" + CLIENT_ID;
+  private final String SEARCH_PATH = ClientController.BASE_PATH + ClientController.SINGLE_ID_CLIENT_PATH;
 
   private static final String EMAIL = "test@mail.local";
 
@@ -49,11 +49,11 @@ class ClientControllerTest {
   @Test
   void searchClientWithIDSuccess() throws Exception {
 
-    ClientResponse clientResponse = new ClientResponse(1L, EMAIL);
+    ClientResponse clientResponse = new ClientResponse(CLIENT_ID, EMAIL);
 
     when(clientService.searchClient(Mockito.anyLong())).thenReturn(clientResponse);
     mockMvc
-        .perform(MockMvcRequestBuilders.get(SEARCH_PATH).contentType(APPLICATION_JSON_VALUE))
+        .perform(MockMvcRequestBuilders.get(SEARCH_PATH, CLIENT_ID).contentType(APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(CLIENT_ID))
