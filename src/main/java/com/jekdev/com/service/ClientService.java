@@ -36,7 +36,7 @@ public class ClientService {
   public void createClient(ClientRequest clientRequest) {
     log.info("Creating client with email ({})", clientRequest.getEmail());
 
-    Client client = clientMapper.mapToClientRequestToEntity(clientRequest);
+    Client client = clientMapper.mapClientRequestToEntity(clientRequest);
 
     if (clientRepository.findByEmail(client.getEmail()).isPresent()) {
       log.info("Client already exits");
@@ -56,12 +56,14 @@ public class ClientService {
    */
   public List<ClientResponse> getAllClients() {
 
+    log.info("Fetching all clients");
     List<Client> clientList = clientRepository.findAll();
 
     if (clientList.isEmpty()) {
+      log.info("No clients found");
       throw new ElementNotFoundException("No clients found, please create some clients first.");
     }
-
+    log.info("Fetched all clients");
     return clientList.stream().map(clientMapper::mapClientEntityToClientResponse).toList();
   }
 
@@ -77,7 +79,10 @@ public class ClientService {
 
     log.info("Searching for client with id ({})", id);
 
-    Client client = clientRepository.findById(id).orElseThrow(() -> new ElementNotFoundException("Client not found"));
+    Client client =
+        clientRepository
+            .findById(id)
+            .orElseThrow(() -> new ElementNotFoundException("Client with id " + id + " not found."));
 
     return clientMapper.mapClientEntityToClientResponse(client);
   }

@@ -19,7 +19,7 @@ public class EmotionMapper {
     if (emotionRequest.getType() != null) {
       emotion.setType(emotionRequest.getType());
     }
-    emotion.setClient(clientMapper.mapToClientRequestToEntity(emotionRequest.getClient()));
+    emotion.setClient(clientMapper.mapClientRequestToEntity(emotionRequest.getClient()));
     return emotion;
   }
 

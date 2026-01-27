@@ -22,12 +22,6 @@ class ClientControllerTest {
 
   @Autowired private MockMvc mockMvc;
 
-  private final String CREATE_PATH = ClientController.BASE_PATH + ClientController.CREATE_PATH;
-
-  private final Long CLIENT_ID = 1L;
-
-  private final String SEARCH_PATH = ClientController.BASE_PATH + ClientController.SINGLE_ID_CLIENT_PATH;
-
   private static final String EMAIL = "test@mail.local";
 
   @Test
@@ -41,6 +35,7 @@ class ClientControllerTest {
         """
             .formatted(EMAIL);
 
+    String CREATE_PATH = ClientController.BASE_PATH + ClientController.CREATE_PATH;
     mockMvc
         .perform(MockMvcRequestBuilders.post(CREATE_PATH).content(clientRequest).contentType(APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.status().isCreated());
@@ -49,9 +44,11 @@ class ClientControllerTest {
   @Test
   void searchClientWithIDSuccess() throws Exception {
 
+    Long CLIENT_ID = 1L;
     ClientResponse clientResponse = new ClientResponse(CLIENT_ID, EMAIL);
 
     when(clientService.searchClient(Mockito.anyLong())).thenReturn(clientResponse);
+    String SEARCH_PATH = ClientController.BASE_PATH + ClientController.SINGLE_ID_CLIENT_PATH;
     mockMvc
         .perform(MockMvcRequestBuilders.get(SEARCH_PATH, CLIENT_ID).contentType(APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.status().isOk())

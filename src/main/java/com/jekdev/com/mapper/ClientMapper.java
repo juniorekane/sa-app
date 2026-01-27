@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClientMapper {
 
-  public Client mapToClientRequestToEntity(ClientRequest clientRequest) {
+  public Client mapClientRequestToEntity(ClientRequest clientRequest) {
     Client client = new Client();
     client.setEmail(clientRequest.getEmail());
     return client;
