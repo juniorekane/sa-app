@@ -6,6 +6,7 @@ import com.jekdev.com.dto.ClientRequest;
 import com.jekdev.com.dto.ClientResponse;
 import com.jekdev.com.service.ClientService;
 import jakarta.validation.Valid;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class ClientController {
    * used in the {@code @RequestMapping} annotation to define the root URL for all endpoints in the {@code
    * ClientController}.
    */
-  public static final String BASE_PATH = "client";
+  public static final String BASE_PATH = "/client";
 
   /**
    * A string constant representing the path segment for retrieving a list of all clients. This value is used in
@@ -30,7 +31,7 @@ public class ClientController {
    * clients" operation. The full endpoint URL is constructed by combining the {@code BASE_PATH} of the controller and
    * this constant.
    */
-  public static final String CLIENT_LIST_PATH = "find_all";
+  public static final String CLIENT_LIST_PATH = "/find_all";
 
   /**
    * A string constant representing the path segment for searching a single client by their unique identifier. This
@@ -41,7 +42,9 @@ public class ClientController {
    * final URL path for this endpoint is constructed by combining the {@code BASE_PATH} of the controller with this
    * constant.
    */
-  public static final String SINGLE_ID_CLIENT_PATH = "search/{id}";
+  public static final String SINGLE_ID_CLIENT_PATH = "/search/{id}";
+
+  public static final String CREATE_PATH = "/create";
 
   private final ClientService clientService;
 
@@ -54,7 +57,7 @@ public class ClientController {
    *     JSON payload and conform to the {@code ClientRequest} structure
    * @return a {@link ResponseEntity} with an HTTP status of 201 (Created) if the client is successfully created
    */
-  @PostMapping(consumes = APPLICATION_JSON_VALUE)
+  @PostMapping(value = CREATE_PATH, consumes = APPLICATION_JSON_VALUE)
   public ResponseEntity<String> create(@Valid @RequestBody ClientRequest clientRequest) {
     clientService.createClient(clientRequest);
     return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -70,8 +73,9 @@ public class ClientController {
    */
   @GetMapping(value = SINGLE_ID_CLIENT_PATH, produces = APPLICATION_JSON_VALUE)
   @ResponseStatus(value = HttpStatus.OK)
-  public ResponseEntity<String> searchClientWithID(@Valid @PathVariable Long id) {
+  public ResponseEntity<Map<String, String>> searchClientWithID(@Valid @PathVariable Long id) {
     ClientResponse clientResponse = clientService.searchClient(id);
-    return ResponseEntity.ok().body(clientResponse.toString());
+    Map<String, String> body = Map.of("id", clientResponse.getId().toString(), "email", clientResponse.getEmail());
+    return ResponseEntity.ok().body(body);
   }
 }
