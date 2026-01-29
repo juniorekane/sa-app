@@ -24,12 +24,6 @@ class EmotionControllerTest {
 
   @Autowired private MockMvc mockMvc;
 
-  private final String CREATE_PATH = EmotionController.BASE_PATH + EmotionController.CREATE_PATH;
-
-  private final String DELETE_PATH = EmotionController.BASE_PATH + EmotionController.DELETE_PATH;
-
-  private final String ALL_EMOTION_PATH = EmotionController.BASE_PATH + EmotionController.ALL_EMOTION_PATH;
-
   private final Long EMOTION_ID = 1L;
 
   private final String TEXT = "test";
@@ -50,6 +44,7 @@ class EmotionControllerTest {
   @Test
   void createEmotion() throws Exception {
 
+    String CREATE_PATH = EmotionController.BASE_PATH + EmotionController.CREATE_PATH;
     mockMvc
         .perform(MockMvcRequestBuilders.post(CREATE_PATH).content(emotionRequest).contentType(APPLICATION_JSON))
         .andExpect(MockMvcResultMatchers.status().isCreated());
@@ -61,6 +56,7 @@ class EmotionControllerTest {
     EmotionResponse emotionResponse = new EmotionResponse(EMOTION_ID, TEXT, EmotionType.HAPPY, clientResponse);
     when(emotionService.findAllEmotion()).thenReturn(List.of(emotionResponse));
 
+    String ALL_EMOTION_PATH = EmotionController.BASE_PATH + EmotionController.ALL_EMOTION_PATH;
     mockMvc
         .perform(MockMvcRequestBuilders.get(ALL_EMOTION_PATH).contentType(APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_VALUE))
@@ -75,6 +71,7 @@ class EmotionControllerTest {
   @Test
   void deleteEmotion() throws Exception {
 
+    String DELETE_PATH = EmotionController.BASE_PATH + EmotionController.DELETE_PATH;
     mockMvc
         .perform(MockMvcRequestBuilders.delete(DELETE_PATH, EMOTION_ID).contentType(APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.status().isNoContent());

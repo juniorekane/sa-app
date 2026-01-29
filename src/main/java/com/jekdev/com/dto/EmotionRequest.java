@@ -2,6 +2,7 @@ package com.jekdev.com.dto;
 
 import com.jekdev.com.base.EmotionType;
 import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +26,9 @@ import lombok.Setter;
 @Setter
 @Getter
 public class EmotionRequest {
+  @NotBlank(message = "The provided text should not be blank")
   private String text;
+
   @Nullable private EmotionType type;
   private ClientRequest client;
 }

@@ -6,8 +6,9 @@ import com.jekdev.com.entities.Client;
 import com.jekdev.com.entities.Emotion;
 import com.jekdev.com.errorhandling.ElementNotFoundException;
 import com.jekdev.com.errorhandling.PresentElementException;
-import com.jekdev.com.mapper.EmotionMapper;
+import com.jekdev.com.mapper.AppMapper;
 import com.jekdev.com.repositories.EmotionRepository;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +16,9 @@ import org.springframework.stereotype.Service;
 
 /**
  * Service class responsible for managing {@link Emotion} entities. Provides methods for creating, retrieving, and
- * deleting emotions, while also enabling mapping between request, entity, and response representations. Utilizes {@link
- * ClientService}, {@link EmotionMapper}, and {@link EmotionRepository} to handle emotion data.
+ * deleting emotions in the system. This class includes logic for handling relationships between emotions and clients,
+ * ensuring consistency and associations are properly maintained. It relies on other components, such as {@link
+ * ClientService}, {@link AppMapper}, and {@link EmotionRepository}, to process and persist data.
  */
 @Service
 @Slf4j
@@ -25,7 +27,7 @@ public class EmotionService {
 
   private final ClientService clientService;
 
-  private final EmotionMapper emotionMapper;
+  private final AppMapper appMapper;
 
   private final EmotionRepository emotionRepository;
 
@@ -38,7 +40,7 @@ public class EmotionService {
    *     null
    */
   public void createEmotion(EmotionRequest emotionRequest) {
-    Emotion emotion = emotionMapper.mapEmotionRequestToEntity(emotionRequest);
+    Emotion emotion = appMapper.mapEmotionRequestToEntity(emotionRequest);
     Client client = clientService.readOrCreateClient(emotion.getClient());
     emotion.setClient(client);
     if (emotionRepository.findByText(emotion.getText()).isPresent()) {
@@ -65,7 +67,7 @@ public class EmotionService {
     if (emotionList.isEmpty()) {
       throw new ElementNotFoundException("No emotions found, please create some emotions first.");
     }
-    return emotionList.stream().map(emotionMapper::mapEmotionEntityToResponse).toList();
+    return emotionList.stream().map(appMapper::mapEmotionEntityToResponse).toList();
   }
 
   /**
@@ -74,7 +76,11 @@ public class EmotionService {
    *
    * @param id the unique identifier of the {@link Emotion} to be deleted; must not be null
    */
+  @Transactional
   public void deleteEmotion(Long id) {
-    emotionRepository.findById(id).orElseThrow(() -> new ElementNotFoundException("Emotion not found"));
+    emotionRepository
+        .findById(id)
+        .orElseThrow(() -> new ElementNotFoundException("Emotion with id " + id + " not found."));
+    emotionRepository.deleteById(id);
   }
 }

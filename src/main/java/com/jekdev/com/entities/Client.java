@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +37,7 @@ public class Client {
 
   @Column(nullable = false, unique = true)
   @NonNull
-  @Email
-  @NotBlank
+  @NotBlank(message = "The email address is blank")
   private String email;
 
   @OneToMany(mappedBy = "client")
