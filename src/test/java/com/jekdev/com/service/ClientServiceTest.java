@@ -9,7 +9,7 @@ import com.jekdev.com.dto.ClientResponse;
 import com.jekdev.com.entities.Client;
 import com.jekdev.com.errorhandling.ElementNotFoundException;
 import com.jekdev.com.errorhandling.PresentElementException;
-import com.jekdev.com.mapper.ClientMapper;
+import com.jekdev.com.mapper.AppMapper;
 import com.jekdev.com.repositories.ClientRepository;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ClientServiceTest {
 
-  @Mock private ClientMapper mockClientMapper;
+  @Mock private AppMapper mockClientMapper;
 
   @Mock private ClientRepository mockClientRepository;
 

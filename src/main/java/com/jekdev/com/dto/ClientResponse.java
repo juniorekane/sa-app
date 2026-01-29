@@ -1,6 +1,5 @@
 package com.jekdev.com.dto;
 
-import com.jekdev.com.entities.Emotion;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -24,5 +23,5 @@ import lombok.Setter;
 public class ClientResponse {
   @NonNull private Long id;
   @NonNull private String email;
-  @Nullable private List<Emotion> emotions;
+  @Nullable private List<EmotionSummary> emotions;
 }

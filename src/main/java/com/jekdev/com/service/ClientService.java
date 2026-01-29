@@ -5,7 +5,7 @@ import com.jekdev.com.dto.ClientResponse;
 import com.jekdev.com.entities.Client;
 import com.jekdev.com.errorhandling.ElementNotFoundException;
 import com.jekdev.com.errorhandling.PresentElementException;
-import com.jekdev.com.mapper.ClientMapper;
+import com.jekdev.com.mapper.AppMapper;
 import com.jekdev.com.repositories.ClientRepository;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ClientService {
 
-  private final ClientMapper clientMapper;
+  private final AppMapper appMapper;
 
   private final ClientRepository clientRepository;
 
@@ -36,7 +36,7 @@ public class ClientService {
   public void createClient(ClientRequest clientRequest) {
     log.info("Creating client with email ({})", clientRequest.getEmail());
 
-    Client client = clientMapper.mapClientRequestToEntity(clientRequest);
+    Client client = appMapper.mapClientRequestToEntity(clientRequest);
 
     if (clientRepository.findByEmail(client.getEmail()).isPresent()) {
       log.info("Client already exits");
@@ -64,7 +64,7 @@ public class ClientService {
       throw new ElementNotFoundException("No clients found, please create some clients first.");
     }
     log.info("Fetched all clients");
-    return clientList.stream().map(clientMapper::mapClientEntityToClientResponse).toList();
+    return clientList.stream().map(appMapper::mapClientEntityToClientResponse).toList();
   }
 
   /**
@@ -84,7 +84,7 @@ public class ClientService {
             .findById(id)
             .orElseThrow(() -> new ElementNotFoundException("Client with id " + id + " not found."));
 
-    return clientMapper.mapClientEntityToClientResponse(client);
+    return appMapper.mapClientEntityToClientResponse(client);
   }
 
   /**

@@ -2,15 +2,11 @@ package com.jekdev.com.errorhandling;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -61,30 +57,38 @@ public class GlobalExceptionHandler {
   }
 
   /**
-   * Handles {@code ConstraintViolationException} thrown during validation failures within the application. This method
-   * constructs a standardized response encapsulating details about the validation error, including a timestamp, HTTP
-   * status, error type, stack trace, and error message.
+   * Handles {@code MethodArgumentNotValidException} thrown within the application. This method processes validation
+   * errors, retrieves the first validation error message, and constructs a standardized JSON response containing error
+   * details.
    *
-   * @param ex the {@code ConstraintViolationException} instance containing details about the validation error
-   * @return a {@code ResponseEntity} object with a 400 Bad Request status and a body containing the error response in
-   *     JSON format
+   * @param ex the {@code MethodArgumentNotValidException} instance containing details about the validation errors
+   * @return a {@code ResponseEntity} object with a 400 Bad Request status and a body containing the validation error
+   *     message in JSON format
    */
-  @ExceptionHandler(value = ConstraintViolationException.class, produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<Map<String, Serializable>> handleCommonValidationErrors(ConstraintViolationException ex) {
+  @ExceptionHandler(value = MethodArgumentNotValidException.class, produces = APPLICATION_JSON_VALUE)
+  public ResponseEntity<Map<String, Object>> handleCommonValidationErrors(MethodArgumentNotValidException ex) {
 
-    Optional<String> message = ex.getConstraintViolations().stream().findFirst().map(ConstraintViolation::getMessage);
-    Map<String, Serializable> error =
+    String message =
+        ex.getBindingResult().getFieldErrors().stream()
+            .findFirst()
+            .map(error -> error.getField() + ": " + error.getDefaultMessage())
+            .orElse("Validation failed");
+
+    return buildErrorResponse(message, ex);
+  }
+
+  private ResponseEntity<Map<String, Object>> buildErrorResponse(String message, Exception ex) {
+    Map<String, Object> error =
         Map.of(
             "timestamp",
-            String.valueOf(LocalDateTime.now()),
+            LocalDateTime.now(),
             "status",
             400,
             "error",
             ex.getClass().getSimpleName(),
-            "trace",
-            Arrays.toString(ex.getStackTrace()),
             "message",
-            message.orElse("Validation failed"));
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+            message);
+
+    return ResponseEntity.badRequest().body(error);
   }
 }
