@@ -44,12 +44,14 @@
         <version.spring-boot-starter-data-jdbc>4.1.0-M1</version.spring-boot-starter-data-jdbc>
         <version.spring-boot-starter-data-jpa>4.1.0-M1</version.spring-boot-starter-data-jpa>
         <version.spring-boot-starter-webmvc>4.1.0-M1</version.spring-boot-starter-webmvc>
+        <version.spring-boot-starter-web>4.1.0-M1</version.spring-boot-starter-web>
         <version.spring-boot-starter-test>4.1.0-M1</version.spring-boot-starter-test>
         <version.spring-boot-starter-data-jdbc-test>4.1.0-M1</version.spring-boot-starter-data-jdbc-test>
         <version.spring-boot-starter-data-jpa-test>4.1.0-M1</version.spring-boot-starter-data-jpa-test>
         <version.spring-boot-starter-webmvc-test>4.1.0-M1</version.spring-boot-starter-webmvc-test>
         <version.spring-boot-devtools>4.1.0-M1</version.spring-boot-devtools>
         <version.springdoc-openapi-starter-webmvc-ui>3.0.1</version.springdoc-openapi-starter-webmvc-ui>
+        <version.spring-boot-starter-thymeleaf>4.0.1</version.spring-boot-starter-thymeleaf>
 
         <!-- data base dependencies -->
         <version.mariadb-java-client>3.5.7</version.mariadb-java-client>
@@ -115,6 +117,16 @@
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${version.springdoc-openapi-starter-webmvc-ui}</version>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${version.spring-boot-starter-web}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-thymeleaf</artifactId>
+                <version>${version.spring-boot-starter-thymeleaf}</version>
             </dependency>
 
             <!-- data base dependencies -->
