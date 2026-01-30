@@ -2,6 +2,7 @@ default:
   image: maven:3.9.12-eclipse-temurin-21
   tags:
     - high-speed-runner
+    - docker
 
 stages:
   - prepare
