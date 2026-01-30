@@ -2,21 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>4.0.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.jek-dev.com</groupId>
+
+    <groupId>com.jek-dev</groupId>
     <artifactId>sa-app</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>sa-app</name>
-    <description>sa-app</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
+    <description>Sentiment analysis app</description>
+    <packaging>pom</packaging>
+    <url>sa-app.jek-dev.com</url>
+
     <developers>
         <developer>
             <name>Junior Ekane</name>
@@ -27,75 +28,140 @@
             </roles>
         </developer>
     </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
+
+    <modules>
+        <module>sa-app-api</module>
+        <module>sa-app-frontend</module>
+    </modules>
+
     <properties>
         <java.version>21</java.version>
-    </properties>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
 
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jdbc-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>3.0.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
-    </dependencies>
+        <!-- formatter plugin version -->
+        <version.formatter-maven-plugin>2.29.0</version.formatter-maven-plugin>
+
+        <!-- spring dependencies version -->
+        <version.spring-boot-starter-data-jdbc>4.1.0-M1</version.spring-boot-starter-data-jdbc>
+        <version.spring-boot-starter-data-jpa>4.1.0-M1</version.spring-boot-starter-data-jpa>
+        <version.spring-boot-starter-webmvc>4.1.0-M1</version.spring-boot-starter-webmvc>
+        <version.spring-boot-starter-web>4.1.0-M1</version.spring-boot-starter-web>
+        <version.spring-boot-starter-test>4.1.0-M1</version.spring-boot-starter-test>
+        <version.spring-boot-starter-data-jdbc-test>4.1.0-M1</version.spring-boot-starter-data-jdbc-test>
+        <version.spring-boot-starter-data-jpa-test>4.1.0-M1</version.spring-boot-starter-data-jpa-test>
+        <version.spring-boot-starter-webmvc-test>4.1.0-M1</version.spring-boot-starter-webmvc-test>
+        <version.spring-boot-devtools>4.1.0-M1</version.spring-boot-devtools>
+        <version.springdoc-openapi-starter-webmvc-ui>3.0.1</version.springdoc-openapi-starter-webmvc-ui>
+        <version.spring-boot-starter-thymeleaf>4.0.1</version.spring-boot-starter-thymeleaf>
+
+        <!-- data base dependencies -->
+        <version.mariadb-java-client>3.5.7</version.mariadb-java-client>
+        <version.h2>2.4.240</version.h2>
+
+        <!-- utilities dependencies -->
+        <version.lombok>1.18.42</version.lombok>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- spring boot dependencies -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-jdbc</artifactId>
+                <version>${version.spring-boot-starter-data-jdbc}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-jpa</artifactId>
+                <version>${version.spring-boot-starter-data-jpa}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-webmvc</artifactId>
+                <version>${version.spring-boot-starter-webmvc}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${version.spring-boot-starter-test}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-jdbc-test</artifactId>
+                <version>${version.spring-boot-starter-data-jdbc-test}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+                <version>${version.spring-boot-starter-data-jpa-test}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-webmvc-test</artifactId>
+                <version>${version.spring-boot-starter-webmvc}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+                <version>${version.spring-boot-devtools}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${version.springdoc-openapi-starter-webmvc-ui}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${version.spring-boot-starter-web}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-thymeleaf</artifactId>
+                <version>${version.spring-boot-starter-thymeleaf}</version>
+            </dependency>
+
+            <!-- data base dependencies -->
+            <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${version.mariadb-java-client}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${version.h2}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- utilities dependencies -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${version.lombok}</version>
+                <scope>compile</scope>
+                <optional>false</optional>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <version>${version.formatter-maven-plugin}</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
