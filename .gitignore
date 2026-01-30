@@ -46,4 +46,4 @@ build/
 *.rar
 
 ## local setting
-/src/main/resources/application-*.properties
+**/application-local.properties
