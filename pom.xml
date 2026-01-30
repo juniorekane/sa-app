@@ -31,6 +31,7 @@
 
     <modules>
         <module>sa-app-api</module>
+        <module>sa-app-frontend</module>
     </modules>
 
     <properties>
