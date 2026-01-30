@@ -1,0 +1,15 @@
+variables:
+  MVN_BUIL_OPTS: "-B -DskipTests"
+
+build-backend:
+  stage: build
+  script:
+    - mvn clean compile
+    - mvn $MVN_BUIL_OPTS clean package
+  artifacts:
+    access: developer
+    expire_in: "1 week"
+    paths:
+      - "**/target/*.jar"
+      - "**/target/classes"
+      - "**/target/test-classes"

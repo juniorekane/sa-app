@@ -1,0 +1,15 @@
+default:
+  image: maven:3.9.12-eclipse-temurin-21
+  tags:
+    - high-speed-runner
+
+stages:
+  - prepare
+  - test
+  - build
+  - sast
+  - publish
+
+
+include:
+  local: pipeline/build.gitlab-ci.yml
