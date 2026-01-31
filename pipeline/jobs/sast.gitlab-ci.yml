@@ -26,7 +26,7 @@ SpotBugs:
     - job: test-project
       artifacts: false
   script:
-    - mvn $MVN_CLI_OPTS spotbugs:spotbugs
+    - mvn $MAVEN_CLI_OPTS spotbugs:spotbugs
   artifacts:
     expire_in: "1 week"
     when: always
@@ -41,7 +41,7 @@ Checkstyle:
     - job: test-project
       artifacts: false
   script:
-    - mvn $MVN_CLI_OPTS checkstyle:checkstyle
+    - mvn $MAVEN_CLI_OPTS checkstyle:checkstyle
   artifacts:
     expire_in: "1 week"
     when: always

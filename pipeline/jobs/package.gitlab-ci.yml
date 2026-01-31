@@ -44,7 +44,7 @@ build-backend-image:
 
 deploy-backend:
   image: $ALPINE_IMAGE
-  stage: package
+  stage: deploy
   when: manual
   needs:
     - job: build-backend-image
@@ -54,7 +54,7 @@ deploy-backend:
 
 deploy-ui:
   image: $ALPINE_IMAGE
-  stage: package
+  stage: deploy
   when: manual
   needs:
     - job: build-frontend-image

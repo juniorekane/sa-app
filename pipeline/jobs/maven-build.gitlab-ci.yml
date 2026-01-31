@@ -8,7 +8,7 @@ update_cache:
       - $CI_PROJECT_DIR/.m2/repository
     policy: pull-push
   script:
-    - mvn $MAVEN_CLI_OPTS -s dependency:go-offline -T 1C
+    - mvn $MAVEN_CLI_OPTS dependency:go-offline -T 1C
 
 build-backend:
   stage: build
@@ -39,10 +39,10 @@ test-project:
     when: always
     reports:
       junit:
-        - "**/target/sufire-reports/*.xml"
+        - "**/target/surefire-reports/*.xml"
       coverage_report:
         coverage_format: jacoco
         path: "**/target/site/jacoco/jacoco.xml"
     paths:
       - "**/target/site/jacoco/jacoco.xml"
-      - "**/target/sufire-reports/*.xml"
+      - "**/target/surefire-reports/*.xml"

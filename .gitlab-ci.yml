@@ -29,10 +29,12 @@ include:
     rules:
       - if: $GITLAB_CI == "false"
         when: always
+      - when: always
   - local: pipeline/jobs/sast.gitlab-ci.yml
     rules:
       - if: $GITLAB_CI == "false"
         when: always
+      - when: always
   - local: pipeline/jobs/package.gitlab-ci.yml
     rules:
       - if: $CI_COMMIT_BRANCH == "main"
@@ -41,6 +43,7 @@ include:
         when: always
       - if: $GITLAB_CI == "false"
         when: always
+      - when: never
   - local: pipeline/jobs/publish.gitlab-ci.yml
     rules:
       - if: $CI_COMMIT_BRANCH == "main"
@@ -49,6 +52,7 @@ include:
         when: always
       - if: $GITLAB_CI == "false"
         when: always
+      - when: never
 
 # This job is necessary because GitLab checks the existence of at least one job before realizing that the workflow defines that no pipeline shall run
 ghost:
