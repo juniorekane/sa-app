@@ -1,0 +1,92 @@
+variables:
+  SEMGREP_IMAGE: "semgrep/semgrep:canary-nonroot"
+  ALPINE_IMAGE: "alpine:latest"
+  GRYPE_IMAGE: "alpine:latest"
+
+pmd_lint_job:
+  stage: sast
+  image: $MVN_DEFAULT_IMAGE
+  allow_failure: false
+  needs:
+    - job: test-project
+      artifacts: false
+  script:
+    - mvn -B compile pmd:pmd
+  artifacts:
+    when: always
+    expire_in: "1 week"
+    paths:
+      - "**/target/site/pmd.html"
+
+SpotBugs:
+  stage: sast
+  image: $MVN_DEFAULT_IMAGE
+  allow_failure: false
+  needs:
+    - job: test-project
+      artifacts: false
+  script:
+    - mvn $MAVEN_CLI_OPTS spotbugs:spotbugs
+  artifacts:
+    expire_in: "1 week"
+    when: always
+    paths:
+      - "**/target/site/spotbugs.xml"
+
+Checkstyle:
+  stage: sast
+  image: $MVN_DEFAULT_IMAGE
+  allow_failure: false
+  needs:
+    - job: test-project
+      artifacts: false
+  script:
+    - mvn $MAVEN_CLI_OPTS checkstyle:checkstyle
+  artifacts:
+    expire_in: "1 week"
+    when: always
+    paths:
+      - "**/target/checkstyle-result.xml"
+
+security-check:
+  stage: sast
+  image: $SEMGREP_IMAGE
+  allow_failure: false
+  variables:
+    SEMGREP_SRC_DIRECTORY: $CI_PROJECT_DIR
+  needs:
+    - job: Checkstyle
+      artifacts: false
+    - job: SpotBugs
+      artifacts: false
+    - job: pmd_lint_job
+      artifacts: false
+  script:
+    - semgrep --config "p/java" --error .
+
+syft:
+  stage: test
+  image: $ALPINE_IMAGE
+  before_script:
+    - wget -qO- https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+  script:
+    - syft dir:. -o cyclonedx-json=sbom.json
+  artifacts:
+    when: always
+    paths:
+      - sbom.json
+
+grype:
+  stage: test
+  image: $ALPINE_IMAGE
+  before_script:
+    - wget -qO- https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+  script:
+    - grype dir:. --fail-on high --output json --file grype-report.json
+  artifacts:
+    when: always
+    paths:
+      - grype-report.json
+
+
+

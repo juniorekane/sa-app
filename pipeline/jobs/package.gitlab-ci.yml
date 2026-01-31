@@ -1,0 +1,63 @@
+variables:
+  DOCKER_BUILD_IMAGE: "docker"
+
+build-package:
+  stage: package
+  image: $MVN_DEFAULT_IMAGE
+  needs:
+    - job: build-backend
+      artifacts: false
+    - job: grype
+      artifacts: false
+    - job: syft
+      artifacts: false
+    - job: pmd_lint_job
+      artifacts: false
+  script:
+    - mvn $MAVEN_CLI_OPTS $MVN_BUILD_OPTS clean package
+  artifacts:
+    when: on_success
+    expire_in: "1 week"
+    paths:
+      - "**/target/*.jar"
+
+build-frontend-image:
+  image: $MVN_DEFAULT_IMAGE
+  stage: package
+  when: manual
+  needs:
+    - job: build-package
+      artifacts: true
+  script:
+    - mvn -pl sa-app-frontend jib:build -Djib.to.auth.username=$CI_REGISTRY_USER -Djib.to.auth.password=$CI_REGISTRY_PASSWORD
+
+build-backend-image:
+  image: $MVN_DEFAULT_IMAGE
+  stage: package
+  when: manual
+  needs:
+    - job: build-package
+      artifacts: true
+  script:
+    - mvn -pl sa-app-api jib:build -Djib.to.auth.username=$CI_REGISTRY_USER -Djib.to.auth.password=$CI_REGISTRY_PASSWORD
+
+
+deploy-backend:
+  image: $ALPINE_IMAGE
+  stage: deploy
+  when: manual
+  needs:
+    - job: build-backend-image
+      artifacts: true
+  script:
+    - echo "test deploy"
+
+deploy-ui:
+  image: $ALPINE_IMAGE
+  stage: deploy
+  when: manual
+  needs:
+    - job: build-frontend-image
+      artifacts: true
+  script:
+    - echo "test deploy"

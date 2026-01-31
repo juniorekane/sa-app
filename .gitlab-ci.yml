@@ -1,15 +1,63 @@
+variables:
+  MVN_DEFAULT_IMAGE: "maven:3.9.12-eclipse-temurin-21"
+  MVN_BUILD_OPTS: "-B -DskipTests"
+  MAVEN_CLI_OPTS: >-
+    --batch-mode
+    --errors
+    --fail-at-end
+    --show-version
+    --no-transfer-progress
+    -DinstallAtEnd=true
+    -DdeployAtEnd=true
+
 default:
-  image: maven:3.9.12-eclipse-temurin-21
   tags:
     - high-speed-runner
 
 stages:
   - prepare
-  - test
   - build
+  - test
   - sast
+  - package
+  - deploy
   - publish
 
 
 include:
-  local: pipeline/build.gitlab-ci.yml
+  - local: pipeline/jobs/maven-build.gitlab-ci.yml
+    rules:
+      - if: $GITLAB_CI == "false"
+        when: always
+      - when: always
+  - local: pipeline/jobs/sast.gitlab-ci.yml
+    rules:
+      - if: $GITLAB_CI == "false"
+        when: always
+      - when: always
+  - local: pipeline/jobs/package.gitlab-ci.yml
+    rules:
+      - if: $CI_COMMIT_BRANCH == "main"
+        when: always
+      - if: $CI_COMMIT_REF_PROTECTED == "true"
+        when: always
+      - if: $GITLAB_CI == "false"
+        when: always
+      - when: never
+  - local: pipeline/jobs/publish.gitlab-ci.yml
+    rules:
+      - if: $CI_COMMIT_BRANCH == "main"
+        when: always
+      - if: $CI_COMMIT_REF_PROTECTED == "true"
+        when: always
+      - if: $GITLAB_CI == "false"
+        when: always
+      - when: never
+
+# This job is necessary because GitLab checks the existence of at least one job before realizing that the workflow defines that no pipeline shall run
+ghost:
+  stage: prepare
+  rules:
+    - when: never
+  script:
+    - echo "DO NOTHING"

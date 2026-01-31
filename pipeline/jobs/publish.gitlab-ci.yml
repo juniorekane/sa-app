@@ -1,0 +1,19 @@
+example-publish-frontend:
+  image: $ALPINE_IMAGE
+  stage: publish
+  when: manual
+  needs:
+    - job: build-frontend-image
+      artifacts: true
+  script:
+    - echo "i should publish an docker image"
+
+example-publish-backend:
+  image: $ALPINE_IMAGE
+  stage: publish
+  when: manual
+  needs:
+    - job: build-backend-image
+      artifacts: true
+  script:
+    - echo "i should publish an docker image"
