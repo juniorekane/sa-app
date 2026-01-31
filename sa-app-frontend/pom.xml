@@ -53,6 +53,15 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <configuration>
+                    <to>
+                        <image>${env.CI_REGISTRY_IMAGE}/sa-app-frontend:${project.version}</image>
+                    </to>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

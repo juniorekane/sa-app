@@ -47,3 +47,7 @@ build/
 
 ## local setting
 **/application-local.properties
+/grype-report.json
+/sbom.json
+/text.txt
+/.gitlab-ci-local/.gitignore

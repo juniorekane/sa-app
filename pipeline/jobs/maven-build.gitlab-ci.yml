@@ -1,0 +1,48 @@
+update_cache:
+  stage: prepare
+  image: $MVN_DEFAULT_IMAGE
+  allow_failure: true #This job may fail because dependencies will be loaded later
+  cache:
+    key: cache-maven-repo-$CI_PROJECT_NAME
+    paths:
+      - $CI_PROJECT_DIR/.m2/repository
+    policy: pull-push
+  script:
+    - mvn $MAVEN_CLI_OPTS -s dependency:go-offline -T 1C
+
+build-backend:
+  stage: build
+  image: $MVN_DEFAULT_IMAGE
+  needs:
+    - job: update_cache
+      artifacts: false
+  script:
+    - mvn clean compile
+    - mvn $MVN_BUILD_OPTS clean package
+  artifacts:
+    access: developer
+    expire_in: "1 week"
+    paths:
+      - "**/target/*.jar"
+      - "**/target/classes"
+      - "**/target/test-classes"
+
+test-project:
+  stage: test
+  image: $MVN_DEFAULT_IMAGE
+  script:
+    - mvn $MAVEN_CLI_OPTS clean test
+  needs:
+    - job: build-backend
+      artifacts: true
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - "**/target/sufire-reports/*.xml"
+      coverage_report:
+        coverage_format: jacoco
+        path: "**/target/site/jacoco/jacoco.xml"
+    paths:
+      - "**/target/site/jacoco/jacoco.xml"
+      - "**/target/sufire-reports/*.xml"

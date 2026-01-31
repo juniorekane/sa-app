@@ -37,8 +37,12 @@
     <properties>
         <java.version>21</java.version>
 
-        <!-- formatter plugin version -->
+        <!-- plugin version -->
+        <version.jib-maven-plugin>3.4.4</version.jib-maven-plugin>
         <version.formatter-maven-plugin>2.29.0</version.formatter-maven-plugin>
+        <version.jacoco>0.8.14</version.jacoco>
+        <version.pmd>3.23.0</version.pmd>
+        <version.spotbugs-maven-plugin>4.9.8.2</version.spotbugs-maven-plugin>
 
         <!-- spring dependencies version -->
         <version.spring-boot-starter-data-jdbc>4.1.0-M1</version.spring-boot-starter-data-jdbc>
@@ -156,37 +160,103 @@
 
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>net.revelc.code.formatter</groupId>
-                <artifactId>formatter-maven-plugin</artifactId>
-                <version>${version.formatter-maven-plugin}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>net.revelc.code.formatter</groupId>
+                    <artifactId>formatter-maven-plugin</artifactId>
+                    <version>${version.formatter-maven-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${version.jacoco}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>report</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>
+                                    report
+                                </goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${version.pmd}</version>
+                    <configuration>
+                        <!-- failOnViolation is actually true by default but can be disabled -->
+                        <failOnViolation>true</failOnViolation>
+                        <!-- printFailingErrors is pretty usefull -->
+                        <printFailingErrors>true</printFailingErrors>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>${version.spotbugs-maven-plugin}</version>
+                    <configuration>
+                        <xmlOutput>true</xmlOutput>
+                        <xmlOutputDirectory>target/site</xmlOutputDirectory>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.google.cloud.tools</groupId>
+                    <artifactId>jib-maven-plugin</artifactId>
+                    <version>${version.jib-maven-plugin}</version>
+                    <configuration>
+                        <from>
+                            <image>eclipse-temurin:21-jre-alpine</image>
+                        </from>
+                        <container>
+                            <ports>
+                                <port>8080</port>
+                            </ports>
+                            <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+                        </container>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
 </project>
