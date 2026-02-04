@@ -1,5 +1,6 @@
 variables:
   DOCKER_BUILD_IMAGE: "docker"
+  TRIVY_IMAGE: "aquasec/trivy:latest"
 
 .docker-build-base:
   stage: package
@@ -28,9 +29,9 @@ build-docker-api:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_COMMIT_REF_PROTECTED == "true"
     - when: manual
-    - allow_failure: true
+      allow_failure: true
 
-build_docker_frontend:
+build-docker-frontend:
   extends: .docker-build-base
   script:
     - mvn $MAVEN_CLI_OPTS jib:build
@@ -44,11 +45,11 @@ build_docker_frontend:
     - when: manual
       allow_failure: true
 
-container-scan:
+container-scan-api:
   stage: package
   image: $TRIVY_IMAGE
   needs:
-    - job: build-backend-image
+    - job: build-docker-api
       artifacts: false
   script:
     - trivy image --exit-code 1 --severity HIGH,CRITICAL $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
@@ -56,24 +57,14 @@ container-scan:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   allow_failure: true
 
-
-build-frontend-image:
-  image: $MVN_DEFAULT_IMAGE
+container-scan-frontend:
   stage: package
-  when: manual
+  image: $TRIVY_IMAGE
   needs:
-    - job: build
-      artifacts: true
+    - job: build-docker-frontend
+      artifacts: false
   script:
-    - mvn -pl sa-app-frontend jib:build -Djib.to.auth.username=$CI_REGISTRY_USER -Djib.to.auth.password=$CI_REGISTRY_PASSWORD
-
-build-backend-image:
-  image: $MVN_DEFAULT_IMAGE
-  stage: package
-  when: manual
-  needs:
-    - job: build
-      artifacts: true
-  script:
-    - mvn -pl sa-app-api jib:build -Djib.to.auth.username=$CI_REGISTRY_USER -Djib.to.auth.password=$CI_REGISTRY_PASSWORD
-
+    - trivy image --exit-code 1 --severity HIGH,CRITICAL $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHA
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  allow_failure: true
