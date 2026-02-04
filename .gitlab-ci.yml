@@ -15,7 +15,7 @@ default:
     key: maven-$CI_COMMIT_REF_SLUG
     paths:
       - .m2/repository/
-    policy: pull-push
+    policy: pull
 
 stages:
   - prepare   # Cache, Dependencies

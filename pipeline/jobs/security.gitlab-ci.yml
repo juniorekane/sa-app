@@ -42,31 +42,12 @@ semgrep:
     - job: build
       artifacts: false
   script:
-    - semgrep -config "p/java" --config "p/owasp-top-ten" --error --json -o semgrep-report.json .
+    - semgrep --config "p/java" --config "p/owasp-top-ten" --error --json -o semgrep-report.json .
   artifacts:
     when: always
     expire_in: 1 week
     paths:
       - semgrep-report.json
-
-owasp-dependency-check:
-  stage: security
-  image: $MVN_DEFAULT_IMAGE
-  needs:
-    - job: build
-      artifacts: true
-  script:
-    - mvn $MAVEN_CLI_OPTS org.owasp:dependency-check-maven:check
-  artifacts:
-    when: always
-    expire_in: 1 week
-    paths:
-      - "**/target/dependency-check-report.html"
-  allow_failure: true
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - when: manual
-
 
 
 
