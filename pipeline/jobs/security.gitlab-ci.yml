@@ -1,0 +1,72 @@
+variables:
+  SEMGREP_IMAGE: "semgrep/semgrep:canary-nonroot"
+  ALPINE_IMAGE: "alpine:latest"
+  GRYPE_IMAGE: "alpine:latest"
+
+sbom:
+  stage: security
+  image: $ALPINE_IMAGE
+  before_script:
+    - wget -qO- https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+  script:
+    - syft dir:. -o cyclonedx-json=sbom.json -o spdx-json=sbom-spdx.json
+  artifacts:
+    when: always
+    paths:
+      - sbom.json
+      - sbom-spdx.json
+
+dependency-scan:
+  stage: security
+  image: $ALPINE_IMAGE
+  needs:
+    - job: sbom
+      artifacts: true
+  before_script:
+    - wget -qO- https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+  script:
+    - grype sbom:sbom.json --fail-on high --output table --output json=grype-report.json
+  artifacts:
+    when: always
+    paths:
+      - grype-report.json
+  allow_failure: true
+
+semgrep:
+  stage: security
+  image: $SEMGREP_IMAGE
+  allow_failure: true
+  variables:
+    SEMGREP_SRC_DIRECTORY: $CI_PROJECT_DIR
+  needs:
+    - job: build
+      artifacts: false
+  script:
+    - semgrep -config "p/java" --config "p/owasp-top-ten" --error --json -o semgrep-report.json .
+  artifacts:
+    when: always
+    expire_in: 1 week
+    paths:
+      - semgrep-report.json
+
+owasp-dependency-check:
+  stage: security
+  image: $MVN_DEFAULT_IMAGE
+  needs:
+    - job: build
+      artifacts: true
+  script:
+    - mvn $MAVEN_CLI_OPTS org.owasp:dependency-check-maven:check
+  artifacts:
+    when: always
+    expire_in: 1 week
+    paths:
+      - "**/target/dependency-check-report.html"
+  allow_failure: true
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - when: manual
+
+
+
+

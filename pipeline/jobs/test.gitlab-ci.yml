@@ -1,0 +1,58 @@
+unit-tests:
+  stage: test
+  image: $MVN_DEFAULT_IMAGE
+  needs:
+    - job: build
+      artifacts: true
+  script:
+    - mvn $MAVEN_CLI_OPTS test jacoco:report
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - "**/target/surefire-reports/*.xml"
+      coverage_report:
+        coverage_format: jacoco
+        path: "**/target/site/jacoco/jacoco.xml"
+    paths:
+      - "**/target/site/jacoco/jacoco.xml"
+      - "**/target/surefire-reports/*.xml"
+  coverage: '/Total.*?([0-9]{1,3})%/'
+
+integration-tests:
+  stage: test
+  image: $MVN_DEFAULT_IMAGE
+  when: manual
+  needs:
+    - job: build
+      artifacts: true
+  script:
+    - mvn $MAVEN_CLI_OPTS verify -DskipUnitTests
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - "**/target/failsafe-reports/*.xml"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_MERGE_REQUEST_ID
+    - when: manual
+      allow_failure: true
+
+coverage-report:
+  stage: test
+  image: $MVN_DEFAULT_IMAGE
+  needs:
+    - job: unit-tests
+      artifacts: true
+  script:
+    - mvn $MAVEN_CLI_OPTS jacoco:report
+  artifacts:
+    when: always
+    reports:
+      coverage_report:
+        coverage_format: jacoco
+        path: "**/target/site/jacoco/jacoco.xml"
+    paths:
+      - "**/target/site/jacoco/"
+  coverage: '/Total.*?([0-9]{1,3})%/'
