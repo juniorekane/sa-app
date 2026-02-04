@@ -1,40 +1,38 @@
 variables:
   MVN_DEFAULT_IMAGE: "maven:3.9.12-eclipse-temurin-21"
-  MVN_BUILD_OPTS: "-B -DskipTests"
+  MVN_BUILD_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   MAVEN_CLI_OPTS: >-
     --batch-mode
     --errors
     --fail-at-end
     --show-version
     --no-transfer-progress
-    -DinstallAtEnd=true
-    -DdeployAtEnd=true
 
 default:
   tags:
     - high-speed-runner
+  cache:
+    key: maven-$CI_COMMIT_REF_SLUG
+    paths:
+      - .m2/repository/
+    policy: pull-push
 
 stages:
-  - prepare
-  - build
-  - test
-  - sast
-  - package
-  - deploy
-  - publish
+  - prepare   # Cache, Dependencies
+  - build     # Compile, Package
+  - test      # Unit Tests, Integration Tests
+  - analyze   # SAST, Code Quality
+  - security  # Vulnerability Scanning, SBOM
+  - package   # Docker Image
+  - deploy    # Deployment to Environments
+  - release   # Tagging, Publishing
 
 
 include:
   - local: pipeline/jobs/maven-build.gitlab-ci.yml
-    rules:
-      - if: $GITLAB_CI == "false"
-        when: always
-      - when: always
-  - local: pipeline/jobs/sast.gitlab-ci.yml
-    rules:
-      - if: $GITLAB_CI == "false"
-        when: always
-      - when: always
+  - local: pipeline/jobs/test.gitlab-ci.yml
+  - local: pipeline/jobs/analyze.gitlab-ci.yml
+  - local: pipeline/jobs/security.gitlab-ci.yml
   - local: pipeline/jobs/package.gitlab-ci.yml
     rules:
       - if: $CI_COMMIT_BRANCH == "main"
@@ -44,9 +42,9 @@ include:
       - if: $GITLAB_CI == "false"
         when: always
       - when: never
-  - local: pipeline/jobs/publish.gitlab-ci.yml
+  - local: pipeline/jobs/deploy.gitlab-ci.yml
     rules:
-      - if: $CI_COMMIT_BRANCH == "main"
+      - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
         when: always
       - if: $CI_COMMIT_REF_PROTECTED == "true"
         when: always
