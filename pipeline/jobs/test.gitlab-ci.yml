@@ -25,6 +25,7 @@ integration-tests:
   needs:
     - job: build
       artifacts: true
+      optional: true
   script:
     - mvn $MAVEN_CLI_OPTS verify -DskipUnitTests
   artifacts:
