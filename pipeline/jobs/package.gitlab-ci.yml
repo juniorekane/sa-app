@@ -1,5 +1,5 @@
 variables:
-  DOCKER_BUILD_IMAGE: "docker"
+  DOCKER_BUILD_IMAGE: "docker:latest"
   TRIVY_IMAGE: "aquasec/trivy:latest"
 
 .docker-build-base:
@@ -12,9 +12,6 @@ variables:
       artifacts: false
     - job: dependency-scan
       artifacts: false
-  before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
-
 
 build-docker-api:
   extends: .docker-build-base

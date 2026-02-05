@@ -22,10 +22,10 @@ unit-tests:
 integration-tests:
   stage: test
   image: $MVN_DEFAULT_IMAGE
-  when: manual
   needs:
     - job: build
       artifacts: true
+      optional: true
   script:
     - mvn $MAVEN_CLI_OPTS verify -DskipUnitTests
   artifacts:
@@ -34,7 +34,5 @@ integration-tests:
       junit:
         - "**/target/failsafe-reports/*.xml"
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_MERGE_REQUEST_ID
     - when: manual
       allow_failure: true

@@ -5,7 +5,7 @@ prepare_dependencies:
   cache:
     key: maven-$CI_COMMIT_REF_SLUG
     paths:
-      - .m2/repository
+      - .m2/repository/
     policy: push
   script:
     - mvn $MAVEN_CLI_OPTS dependency:go-offline -T 1C
