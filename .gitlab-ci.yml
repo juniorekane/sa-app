@@ -32,6 +32,7 @@ workflow:
     - if: $CI_PIPELIN_SOURCE == "merge_request_event"
       when: never
     - if: $CI_COMMIT_BRANCH
+      when: always
 
 
 include:
