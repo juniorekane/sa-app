@@ -83,15 +83,16 @@ public class AppMapper {
      * @return an {@link EmotionSummary} object containing the mapped emotion details
      */
     public EmotionSummary mapEmotionToSummary(Emotion emotion) {
-        return new EmotionSummary(emotion.getId(), emotion.getText(), emotion.getType());
+        return new EmotionSummary(emotion.getId(), emotion.getText(), emotion.getType(), emotion.getScore());
     }
 
     /**
      * Maps an {@link EmotionRequest} object to an {@link Emotion} entity.
      * <p>
      * This method transfers the data from an {@code EmotionRequest} DTO to a new {@code Emotion} entity. It maps key
-     * attributes, including the text and type of the emotion, as well as the associated client. The client information
-     * is mapped using the {@code mapClientRequestToEntity} method.
+     * attributes, including the text and associated client. The sentiment type is resolved later via an external
+     * provider in the service layer. The client information is mapped using the {@code mapClientRequestToEntity}
+     * method.
      *
      * @param emotionRequest
      *            the {@link EmotionRequest} object containing the emotion details to be mapped; must not be null
@@ -101,9 +102,6 @@ public class AppMapper {
     public Emotion mapEmotionRequestToEntity(EmotionRequest emotionRequest) {
         Emotion emotion = new Emotion();
         emotion.setText(emotionRequest.getText());
-        if (emotionRequest.getType() != null) {
-            emotion.setType(emotionRequest.getType());
-        }
         Client client = mapClientRequestToEntity(emotionRequest.getClient());
         emotion.setClient(client);
         return emotion;
@@ -123,6 +121,6 @@ public class AppMapper {
      */
     public EmotionResponse mapEmotionEntityToResponse(Emotion emotion) {
         ClientResponse clientResponse = new ClientResponse(emotion.getClient().getId(), emotion.getClient().getEmail());
-        return new EmotionResponse(emotion.getId(), emotion.getText(), emotion.getType(), clientResponse);
+        return new EmotionResponse(emotion.getId(), emotion.getText(), emotion.getType(), emotion.getScore(), clientResponse);
     }
 }

@@ -1,9 +1,9 @@
 package com.jekdev.saappapi.dto;
 
-import com.jekdev.saappapi.base.EmotionType;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,9 +13,9 @@ import lombok.Setter;
  * given piece of text.
  * <p>
  * The {@code EmotionRequest} class includes the following components: - {@code text}: The text input for which the
- * emotional context needs to be processed or evaluated. - {@code type}: The expected or predefined type of emotion
- * associated with the input text. This is represented by the {@code EmotionType} enum. - {@code clientRequest}:
- * Information about the client initiating the request, provided via a {@code ClientRequest} instance, which assists in
+ * emotional context needs to be processed or evaluated. - {@code type}: Optional field kept for backward compatibility.
+ * The final sentiment label is now resolved by an external sentiment provider. - {@code clientRequest}: Information
+ * about the client initiating the request, provided via a {@code ClientRequest} instance, which assists in
  * contextualizing the emotion evaluation.
  * <p>
  * This class leverages Lombok annotations to reduce boilerplate code such as constructors, getters, and setters. It is
@@ -23,6 +23,7 @@ import lombok.Setter;
  * layers or systems.
  */
 @AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
 public class EmotionRequest {
@@ -30,6 +31,6 @@ public class EmotionRequest {
     private String text;
 
     @Nullable
-    private EmotionType type;
+    private String type;
     private ClientRequest client;
 }

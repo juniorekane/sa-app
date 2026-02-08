@@ -4,7 +4,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import com.jekdev.saappapi.base.EmotionType;
 import com.jekdev.saappapi.dto.ClientResponse;
 import com.jekdev.saappapi.dto.EmotionResponse;
 import com.jekdev.saappapi.service.EmotionService;
@@ -29,7 +28,7 @@ class EmotionControllerTest {
     private final Long EMOTION_ID = 1L;
 
     private final String TEXT = "test";
-    private final String TYPE = "HAPPY";
+    private final String TYPE = "POSITIVE";
     private final String EMAIL = "test@local.mail";
     private final String emotionRequest = """
             {
@@ -52,7 +51,7 @@ class EmotionControllerTest {
     @Test
     void getAllEmotions() throws Exception {
         ClientResponse clientResponse = new ClientResponse(EMOTION_ID, EMAIL);
-        EmotionResponse emotionResponse = new EmotionResponse(EMOTION_ID, TEXT, EmotionType.HAPPY, clientResponse);
+        EmotionResponse emotionResponse = new EmotionResponse(EMOTION_ID, TEXT, TYPE, 0.91, clientResponse);
         when(emotionService.findAllEmotion()).thenReturn(List.of(emotionResponse));
 
         String ALL_EMOTION_PATH = EmotionController.BASE_PATH + EmotionController.ALL_EMOTION_PATH;
@@ -60,7 +59,8 @@ class EmotionControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].text").value(TEXT))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(EMOTION_ID))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].type").value(EmotionType.HAPPY.name()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].type").value(TYPE))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].score").value(0.91))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].client.email").value(EMAIL))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].client.id").value(clientResponse.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk());
