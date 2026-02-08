@@ -22,9 +22,6 @@ build:
     expire_in: 1 day
     paths:
       - "**/target/*.jar"
-      - "**/target/classes/"
-      - "**/target/test-classes/"
-      - "**/target/generated-sources/"
       - "pom.xml"
       - "**/pom.xml"
 

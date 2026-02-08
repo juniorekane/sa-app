@@ -19,7 +19,7 @@ build-docker-api:
   script:
     - echo "$CI_REGISTRY_IMAGE"
     - curl -v "https://$CI_REGISTRY/v2/"
-    - mvn $MAVEN_CLI_OPTS jib:build
+    - mvn $MAVEN_CLI_OPTS package jib:build -DskipTests
       -pl sa-app-api
       -Djib.to.image=$CI_REGISTRY_IMAGE/api:$CI_COMMIT_SHA
       -Djib.to.auth.username=$CI_REGISTRY_USER
@@ -33,7 +33,7 @@ build-docker-api:
 build-docker-frontend:
   extends: .docker-build-base
   script:
-    - mvn $MAVEN_CLI_OPTS jib:build
+    - mvn $MAVEN_CLI_OPTS package jib:build -DskipTests
       -pl sa-app-frontend
       -Djib.to.image=$CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHA
       -Djib.to.auth.username=$CI_REGISTRY_USER
