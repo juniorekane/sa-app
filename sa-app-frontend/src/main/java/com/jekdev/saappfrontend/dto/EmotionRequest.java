@@ -1,6 +1,5 @@
 package com.jekdev.saappfrontend.dto;
 
-import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,10 +14,9 @@ import lombok.Setter;
  * given piece of text.
  *
  * <p>The {@code EmotionRequest} class includes the following components: - {@code text}: The text input for which the
- * emotional context needs to be processed or evaluated. - {@code type}: The expected or predefined type of emotion
- * associated with the input text. This is represented by the {@code EmotionType} enum. - {@code clientRequest}:
- * Information about the client initiating the request, provided via a {@code ClientRequest} instance, which assists in
- * contextualizing the emotion evaluation.
+ * emotional context needs to be processed or evaluated. - {@code clientRequest}: Information about the client
+ * initiating the request, provided via a {@code ClientRequest} instance, which assists in contextualizing the emotion
+ * evaluation.
  *
  * <p>This class leverages Lombok annotations to reduce boilerplate code such as constructors, getters, and setters. It
  * is typically used as a Data Transfer Object (DTO) within the application to carry emotion analysis requests between
@@ -32,7 +30,6 @@ public class EmotionRequest {
   @NotBlank(message = "The provided text should not be blank")
   private String text;
 
-  @Nullable private String type;
   @NotNull(message = "Client data is required")
   @Valid
   private ClientRequest client;

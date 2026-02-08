@@ -12,15 +12,7 @@
         <label for="text">Text</label>
         <input id="text" type="text" th:field="*{text}" name="text" placeholder="Text" required/>
         <div th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div>
-
-        <label for="type">Type</label>
-        <select id="type" th:field="*{type}" name="type" required>
-            <option value="">Please select</option>
-            <option value="HAPPY">HAPPY</option>
-            <option value="MIDDLE">MIDDLE</option>
-            <option value="BAD">BAD</option>
-        </select>
-        <div th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></div>
+        <p>Sentiment type is detected automatically by the external API.</p>
 
         <label for="clientEmail">Client E-mail</label>
         <input id="clientEmail" type="email" th:field="*{client.email}" name="client.email" placeholder="E-mail" required/>

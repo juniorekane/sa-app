@@ -18,6 +18,7 @@
             <th scope="col">Emotion-ID</th>
             <th scope="col">Text</th>
             <th scope="col">Typ</th>
+            <th scope="col">Score</th>
             <th scope="col">Client-ID</th>
             <th scope="col">Client E-Mail</th>
             <th scope="col">Aktion</th>
@@ -28,6 +29,7 @@
             <td th:text="${emotion.id}"></td>
             <td th:text="${emotion.text}"></td>
             <td th:text="${emotion.type}"></td>
+            <td th:text="${emotion.score}"></td>
             <td th:text="${emotion.client != null ? emotion.client.id : '-'}"></td>
             <td th:text="${emotion.client != null ? emotion.client.email : '-'}"></td>
             <td>

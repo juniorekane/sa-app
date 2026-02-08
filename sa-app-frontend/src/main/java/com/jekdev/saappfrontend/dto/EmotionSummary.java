@@ -11,8 +11,8 @@ import lombok.Setter;
  * events within the application.
  *
  * <p>The {@code EmotionSummary} class includes the following attributes: - {@code id}: A unique identifier for the
- * emotion entry. - {@code text}: A textual description or representation of the emotion. - {@code type}: The type of
- * emotion, categorized using the {@code EmotionType} enumeration.
+ * emotion entry. - {@code text}: A textual description or representation of the emotion. - {@code type}: The sentiment
+ * label returned by the provider. - {@code score}: Confidence score for the returned sentiment label.
  *
  * <p>This class is typically used in scenarios requiring a lightweight aggregation of emotion data, such as summarizing
  * emotions linked to a specific client or context. It facilitates efficient data encapsulation and transfer across
@@ -32,4 +32,6 @@ public class EmotionSummary {
   private String text;
 
   private String type;
+
+  private Double score;
 }
