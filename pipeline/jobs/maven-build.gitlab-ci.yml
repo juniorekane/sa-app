@@ -18,11 +18,4 @@ build:
       artifacts: false
   script:
     - mvn $MVN_BUILD_OPTS clean package -DskipTests
-  artifacts:
-    expire_in: 1 day
-    paths:
-      - "sa-app-api/target/*.jar"
-      - "sa-app-frontend/target/*.jar"
-      - "pom.xml"
-      - "**/pom.xml"
 
