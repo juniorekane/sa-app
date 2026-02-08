@@ -17,6 +17,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
+/**
+ * Client-facing service for calling backend API endpoints from the frontend module.
+ *
+ * <p>This service encapsulates all HTTP communication from the UI layer to the API module and translates backend
+ * errors into frontend-specific exceptions used by the global error handler.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -24,6 +30,12 @@ public class SentimentApiService {
 
   private final RestClient client;
 
+  /**
+   * Creates a new client in the backend API.
+   *
+   * @param request client creation payload
+   * @return backend HTTP status code
+   */
   public HttpStatusCode createUser(ClientRequest request) {
     try {
 
@@ -41,6 +53,11 @@ public class SentimentApiService {
     }
   }
 
+  /**
+   * Retrieves all clients from the backend API.
+   *
+   * @return list of client responses
+   */
   public List<ClientResponse> getAllClient() {
     try {
 
@@ -62,6 +79,12 @@ public class SentimentApiService {
     }
   }
 
+  /**
+   * Retrieves a single client by ID.
+   *
+   * @param id client ID
+   * @return resolved client response
+   */
   public ClientResponse findSingleClient(Long id) {
 
     try {
@@ -84,6 +107,12 @@ public class SentimentApiService {
     }
   }
 
+  /**
+   * Creates a new emotion in the backend API.
+   *
+   * @param request emotion creation payload
+   * @return backend HTTP status code
+   */
   public HttpStatusCode createEmotion(EmotionRequest request) {
     try {
 
@@ -101,6 +130,11 @@ public class SentimentApiService {
     }
   }
 
+  /**
+   * Retrieves all emotions from the backend API.
+   *
+   * @return list of emotion responses
+   */
   public List<EmotionResponse> getAllEmotions() {
     try {
 
@@ -122,6 +156,12 @@ public class SentimentApiService {
     }
   }
 
+  /**
+   * Deletes a single emotion by ID.
+   *
+   * @param id emotion ID
+   * @return backend HTTP status code
+   */
   public HttpStatusCode deleteEmotion(Long id) {
     try {
 

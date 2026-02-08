@@ -6,6 +6,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Request DTO for creating or referencing a client via email address.
+ *
+ * <p>Validation ensures the field is present and has a valid email format.
+ */
 @RequiredArgsConstructor
 @Getter
 @Setter

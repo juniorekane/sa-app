@@ -16,6 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * Web controller for frontend page routing and form submissions.
+ *
+ * <p>This controller provides endpoints for client and emotion workflows and populates Thymeleaf views with the
+ * required model attributes.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Controller
@@ -29,12 +35,26 @@ public class UiController {
 
   private final SentimentApiService api;
 
+  /**
+   * Displays the frontend entry page.
+   *
+   * @param model Spring MVC model
+   * @return index template name
+   */
   @GetMapping(value = CLIENT_PATH)
   public String getBasePath(Model model) {
     model.addAttribute("clientRequest", new ClientRequest());
     return "index";
   }
 
+  /**
+   * Handles client creation from the entry page.
+   *
+   * @param req client request payload
+   * @param br validation result
+   * @param model Spring MVC model
+   * @return index template when successful or when validation fails
+   */
   @PostMapping("/new/client")
   public String createClient(@Valid @ModelAttribute("clientRequest") ClientRequest req, BindingResult br, Model model) {
     if (br.hasErrors()) return "index";
@@ -46,18 +66,37 @@ public class UiController {
     return "index";
   }
 
+  /**
+   * Displays the page containing all clients.
+   *
+   * @param model Spring MVC model
+   * @return listUser template name
+   */
   @GetMapping(CLIENT_PATH + "/all")
   public String getAllClient(Model model) {
     model.addAttribute("clients", api.getAllClient());
     return "listUser";
   }
 
+  /**
+   * Displays a page for a single client.
+   *
+   * @param id client ID
+   * @param model Spring MVC model
+   * @return singleUser template name
+   */
   @GetMapping(CLIENT_PATH + "/find")
   public String getOneClient(@RequestParam("id") Long id, Model model) {
     model.addAttribute("client", api.findSingleClient(id));
     return "singleUser";
   }
 
+  /**
+   * Displays the emotion creation page.
+   *
+   * @param model Spring MVC model
+   * @return createSentiment template name
+   */
   @GetMapping(EMOTION_PATH)
   public String getCreateEmotionPage(Model model) {
     if (!model.containsAttribute("emotionRequest")) {
@@ -66,6 +105,14 @@ public class UiController {
     return "createSentiment";
   }
 
+  /**
+   * Handles emotion creation requests.
+   *
+   * @param req emotion request payload
+   * @param br validation result
+   * @param model Spring MVC model
+   * @return createSentiment template name
+   */
   @PostMapping(EMOTION_PATH + "/create")
   public String createEmotion(
       @Valid @ModelAttribute("emotionRequest") EmotionRequest req, BindingResult br, Model model) {
@@ -78,12 +125,25 @@ public class UiController {
     return "createSentiment";
   }
 
+  /**
+   * Displays all emotions.
+   *
+   * @param model Spring MVC model
+   * @return listEmotion template name
+   */
   @GetMapping(EMOTION_PATH + "/all")
   public String getAllEmotion(Model model) {
     model.addAttribute("emotions", api.getAllEmotions());
     return "listEmotion";
   }
 
+  /**
+   * Deletes an emotion and redirects back to the emotion list.
+   *
+   * @param id emotion ID
+   * @param redirectAttributes redirect flash attributes
+   * @return redirect URL to the emotion list page
+   */
   @PostMapping(EMOTION_PATH + "/delete")
   public String deleteEmotion(@RequestParam("id") Long id, RedirectAttributes redirectAttributes) {
     var status = api.deleteEmotion(id);
