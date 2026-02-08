@@ -1,6 +1,8 @@
 package com.jekdev.saappapi.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.jekdev.saappapi.errorhandling.SentimentProviderException;
 import com.jekdev.saappapi.utils.SentimentRequest;
 import com.jekdev.saappapi.utils.SentimentResult;
@@ -18,6 +20,7 @@ import org.springframework.web.client.RestClientException;
 public class SentimentAnalysisService {
 
     private final @Qualifier("sentimentRestClient") RestClient sentimentRestClient;
+    private final ObjectMapper objectMapper;
 
     @Value("${sentiment.api.token:}")
     private String apiToken;
@@ -32,15 +35,19 @@ public class SentimentAnalysisService {
         }
 
         try {
-            JsonNode response = sentimentRestClient.post()
+            String responseBody = sentimentRestClient.post()
                     .uri(modelPath)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + apiToken)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(new SentimentRequest(text))
                     .retrieve()
-                    .body(JsonNode.class);
+                    .body(String.class);
 
+            JsonNode response = objectMapper.readTree(responseBody);
             return parseBestPrediction(response);
+        } catch (JacksonException exception) {
+            throw new SentimentProviderException("Failed to parse sentiment provider response: " + exception.getMessage(),
+                    exception);
         } catch (RestClientException exception) {
             throw new SentimentProviderException("Sentiment provider request failed: " + exception.getMessage(),
                     exception);
