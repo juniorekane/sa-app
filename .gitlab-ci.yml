@@ -27,6 +27,13 @@ stages:
   - deploy    # Deployment to Environments
   - release   # Tagging, Publishing
 
+workflow:
+  rules:
+    - if: $CI_PIPELIN_SOURCE == "merge_request_event"
+      when: never
+    - if: $CI_COMMIT_BRANCH
+      when: always
+
 
 include:
   - local: pipeline/jobs/maven-build.gitlab-ci.yml
@@ -35,7 +42,7 @@ include:
   - local: pipeline/jobs/security.gitlab-ci.yml
   - local: pipeline/jobs/package.gitlab-ci.yml
     rules:
-      - if: $CI_COMMIT_BRANCH == "main"
+      - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
         when: always
       - if: $CI_COMMIT_REF_PROTECTED == "true"
         when: always

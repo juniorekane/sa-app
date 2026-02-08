@@ -5,7 +5,12 @@ unit-tests:
     - job: build
       artifacts: true
   script:
-    - mvn $MAVEN_CLI_OPTS test jacoco:report
+    - mvn $MAVEN_CLI_OPTS clean test jacoco:report
+    - |
+      awk -F"," '
+        FNR > 1 { instructions += $4 + $5; covered += $5 }
+        END { printf "Coverage: %.2f%%\n", 100*covered/instructions }
+      ' */target/site/jacoco/jacoco.csv || echo "Coverage: 0%"
   artifacts:
     when: always
     reports:
@@ -17,7 +22,7 @@ unit-tests:
     paths:
       - "**/target/site/jacoco/jacoco.xml"
       - "**/target/surefire-reports/*.xml"
-  coverage: '/Total.*?([0-9]{1,3})%/'
+  coverage: '/Coverage: \d+\.?\d*%/'
 
 integration-tests:
   stage: test
