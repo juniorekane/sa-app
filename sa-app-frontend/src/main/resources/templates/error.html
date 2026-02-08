@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="~{fragment/layout}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <h1>Error page</h1>
+    <div th:if="${statusCode != null}"> Status Code: <span th:text="${statusCode}"></span></div>
+    <br>
+    <div th:if="${statusText != null}">Status text: <span th:text="${statusText}"></span></div>
+    <br>
+    <div th:if="${errorMessage != null}">Message: <span th:text="${errorMessage}"></span></div>
+
+
+    <button type='button' onclick='window.history.back()'>Back</button>
+</div>
+
+
+</body>
+</html>

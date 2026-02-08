@@ -1,0 +1,52 @@
+<!doctype html>
+<html
+        layout:decorate="~{fragment/layout}"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+>
+
+<body>
+
+<main layout:fragment="content">
+    <div th:if="${status != null}">
+        Status: <span th:text="${status}"></span>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Emotion-ID</th>
+            <th scope="col">Text</th>
+            <th scope="col">Typ</th>
+            <th scope="col">Client-ID</th>
+            <th scope="col">Client E-Mail</th>
+            <th scope="col">Aktion</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="emotion : ${emotions}">
+            <td th:text="${emotion.id}"></td>
+            <td th:text="${emotion.text}"></td>
+            <td th:text="${emotion.type}"></td>
+            <td th:text="${emotion.client != null ? emotion.client.id : '-'}"></td>
+            <td th:text="${emotion.client != null ? emotion.client.email : '-'}"></td>
+            <td>
+                <form th:action="@{/ui/emotions/delete}" method="post">
+                    <input type="hidden" name="id" th:value="${emotion.id}"/>
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <form th:action="@{/ui/emotions}" method="get">
+        <button type="submit">Create emotion</button>
+    </form>
+
+    <button type='button' onclick='window.history.back()'>Back</button>
+</main>
+
+</body>
+
+</html>

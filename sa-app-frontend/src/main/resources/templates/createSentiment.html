@@ -1,0 +1,46 @@
+<!doctype html>
+<html
+        layout:decorate="~{fragment/layout}"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+>
+
+<body>
+
+<main layout:fragment="content">
+    <form method="post" th:action="@{/ui/emotions/create}" th:object="${emotionRequest}">
+        <label for="text">Text</label>
+        <input id="text" type="text" th:field="*{text}" name="text" placeholder="Text" required/>
+        <div th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div>
+
+        <label for="type">Type</label>
+        <select id="type" th:field="*{type}" name="type" required>
+            <option value="">Please select</option>
+            <option value="HAPPY">HAPPY</option>
+            <option value="MIDDLE">MIDDLE</option>
+            <option value="BAD">BAD</option>
+        </select>
+        <div th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></div>
+
+        <label for="clientEmail">Client E-mail</label>
+        <input id="clientEmail" type="email" th:field="*{client.email}" name="client.email" placeholder="E-mail" required/>
+        <div th:if="${#fields.hasErrors('client.email')}" th:errors="*{client.email}"></div>
+
+        <button type="submit">Create emotion</button>
+    </form>
+
+    <div th:if="${status != null}">
+        Status: <span th:text="${status}"></span>
+    </div>
+
+    <form th:action="@{/ui/emotions/all}" method="get">
+        <button type="submit">List all emotions</button>
+    </form>
+
+    <button type='button' onclick='window.history.back()'>Back</button>
+
+</main>
+
+</body>
+
+</html>
