@@ -17,6 +17,8 @@ build-docker-api:
   extends: .docker-build-base
   stage: package
   script:
+    - echo "$CI_REGISTRY_IMAGE"
+    - curl -v "https://$CI_REGISTRY/v2/"
     - mvn $MAVEN_CLI_OPTS jib:build
       -pl sa-app-api
       -Djib.to.image=$CI_REGISTRY_IMAGE/api:$CI_COMMIT_SHA

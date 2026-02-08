@@ -48,7 +48,7 @@ include:
         when: always
       - if: $GITLAB_CI == "false"
         when: always
-      - when: never
+      - when: always
   - local: pipeline/jobs/deploy.gitlab-ci.yml
     rules:
       - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
