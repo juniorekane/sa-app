@@ -1,6 +1,7 @@
 variables:
   DOCKER_BUILD_IMAGE: "docker:latest"
   TRIVY_IMAGE: "aquasec/trivy:latest"
+  MAVEN_OPTS: "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false"
 
 .docker-build-base:
   stage: package
@@ -19,7 +20,7 @@ build-docker-api:
   script:
     - echo "$CI_REGISTRY_IMAGE"
     - curl -v "https://$CI_REGISTRY/v2/"
-    - mvn $MAVEN_CLI_OPTS package jib:build -DskipTests
+    - mvn $MAVEN_CLI_OPTS $MAVEN_OPTS package jib:build -DskipTests
       -pl sa-app-api
       -Djib.to.image=$CI_REGISTRY_IMAGE/api:$CI_COMMIT_SHA
       -Djib.to.auth.username=$CI_REGISTRY_USER
