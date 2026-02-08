@@ -58,6 +58,7 @@
                 <artifactId>jib-maven-plugin</artifactId>
                 <configuration>
                     <to>
+                        <!--suppress UnresolvedMavenProperty -->
                         <image>${env.CI_REGISTRY_IMAGE}/sa-app-frontend:${project.version}</image>
                     </to>
                 </configuration>
