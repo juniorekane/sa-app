@@ -1,0 +1,27 @@
+<!doctype html>
+<html
+        layout:decorate="~{fragment/layout}"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+>
+
+<body>
+
+<main layout:fragment="content">
+
+    <form method="POST" th:action="@{/ui/new/client}" th:object="${clientRequest}">
+        <label for="email">E-mail</label>
+        <input id="email" type="email" th:field="*{email}" name="email" placeholder="E-mail" required/>
+        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+        <button type="submit">Create</button>
+    </form>
+
+    <div th:if="${status != null}">
+        Status: <span th:text="${status}"></span>
+    </div>
+
+</main>
+
+</body>
+
+</html>

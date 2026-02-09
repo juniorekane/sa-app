@@ -5,7 +5,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import com.jekdev.saappapi.base.EmotionType;
 import com.jekdev.saappapi.dto.ClientRequest;
 import com.jekdev.saappapi.dto.ClientResponse;
 import com.jekdev.saappapi.dto.EmotionRequest;
@@ -16,6 +15,7 @@ import com.jekdev.saappapi.errorhandling.ElementNotFoundException;
 import com.jekdev.saappapi.errorhandling.PresentElementException;
 import com.jekdev.saappapi.mapper.AppMapper;
 import com.jekdev.saappapi.repositories.EmotionRepository;
+import com.jekdev.saappapi.utils.SentimentResult;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -36,6 +36,8 @@ class EmotionServiceTest {
 
   @Mock private EmotionRepository mockEmotionRepository;
 
+  @Mock private SentimentAnalysisService sentimentAnalysisService;
+
   @InjectMocks private EmotionService emotionService;
 
   private EmotionRequest mockEmotionRequest;
@@ -51,7 +53,7 @@ class EmotionServiceTest {
 
     ClientRequest mockClientRequest = new ClientRequest();
     mockClientRequest.setEmail("test@local.mail");
-    mockEmotionRequest = new EmotionRequest("Test text", EmotionType.BAD, mockClientRequest);
+    mockEmotionRequest = new EmotionRequest("Test text", "BAD", mockClientRequest);
 
     mockClient = new Client();
     mockClient.setEmail(mockClientRequest.getEmail());
@@ -70,6 +72,7 @@ class EmotionServiceTest {
     when(appMapper.mapEmotionRequestToEntity(mockEmotionRequest)).thenReturn(mockEmotion);
     when(mockClientService.readOrCreateClient(mockClient)).thenReturn(mockClient);
     when(mockEmotionRepository.findByText(mockEmotion.getText())).thenReturn(Optional.empty());
+    when(sentimentAnalysisService.analyze(mockEmotion.getText())).thenReturn(new SentimentResult("POSITIVE", 0.98));
 
     // Execute test
     emotionService.createEmotion(mockEmotionRequest);
@@ -78,7 +81,10 @@ class EmotionServiceTest {
     verify(appMapper).mapEmotionRequestToEntity(mockEmotionRequest);
     verify(mockClientService).readOrCreateClient(mockClient);
     verify(mockEmotionRepository).findByText(mockEmotion.getText());
+    verify(sentimentAnalysisService).analyze(mockEmotion.getText());
     verify(mockEmotionRepository).save(mockEmotion);
+    Assertions.assertEquals("POSITIVE", mockEmotion.getType());
+    Assertions.assertEquals(0.98, mockEmotion.getScore());
     verifyNoMoreInteractions(mockEmotionRepository);
   }
 
@@ -98,6 +104,7 @@ class EmotionServiceTest {
     verify(appMapper).mapEmotionRequestToEntity(mockEmotionRequest);
     verify(mockClientService).readOrCreateClient(mockClient);
     verify(mockEmotionRepository).findByText(mockEmotion.getText());
+    verifyNoInteractions(sentimentAnalysisService);
     verifyNoMoreInteractions(mockEmotionRepository);
   }
 
@@ -110,6 +117,7 @@ class EmotionServiceTest {
             mockEmotion.getId(),
             mockEmotion.getText(),
             mockEmotion.getType(),
+            mockEmotion.getScore(),
             new ClientResponse(mockEmotion.getClient().getId(), mockEmotion.getClient().getEmail()));
 
     // Prepare stubbing for repository

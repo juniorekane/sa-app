@@ -1,6 +1,5 @@
 package com.jekdev.saappapi.dto;
 
-import com.jekdev.saappapi.base.EmotionType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -11,7 +10,8 @@ import lombok.Setter;
  * <p>
  * The {@code EmotionResponse} class includes: - {@code id}: A unique identifier for the emotion entry. - {@code
  * text}: The textual representation or description of the emotion. - {@code type}: The type of emotion, represented by
- * the {@code EmotionType} enum. - {@code client}: A {@code ClientResponse} instance that provides details about the
+ * the label returned from the external sentiment provider. - {@code client}: A {@code ClientResponse} instance that
+ * provides details about the
  * client related to the emotion.
  * <p>
  * This class leverages Lombok annotations to generate boilerplate code such as constructors, getters, and setters,
@@ -27,7 +27,9 @@ public class EmotionResponse {
 
     private final String text;
 
-    private final EmotionType type;
+    private final String type;
+
+    private final Double score;
 
     private final ClientResponse client;
 }

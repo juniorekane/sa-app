@@ -1,6 +1,5 @@
 package com.jekdev.saappapi.mapper;
 
-import com.jekdev.saappapi.base.EmotionType;
 import com.jekdev.saappapi.dto.ClientRequest;
 import com.jekdev.saappapi.dto.ClientResponse;
 import com.jekdev.saappapi.dto.EmotionRequest;
@@ -38,7 +37,7 @@ class AppMapperTest {
     mockClient.setEmail(mockClientRequest.getEmail());
     mockClient.setId(1L);
 
-    mockEmotionRequest = new EmotionRequest("test", EmotionType.BAD, mockClientRequest);
+    mockEmotionRequest = new EmotionRequest("test", "BAD", mockClientRequest);
 
     mockEmotion = new Emotion();
     mockEmotion.setText(mockEmotionRequest.getText());
@@ -84,7 +83,8 @@ class AppMapperTest {
     Emotion mockEmotion = new Emotion();
     mockEmotion.setText("test");
     mockEmotion.setId(mockClient.getId());
-    mockEmotion.setType(EmotionType.MIDDLE);
+    mockEmotion.setType("POSITIVE");
+    mockEmotion.setScore(0.91);
 
     mockClient.setEmotions(List.of(mockEmotion));
 
@@ -97,7 +97,8 @@ class AppMapperTest {
     assert clientResponse.getEmotions() != null;
     Assertions.assertEquals(mockEmotion.getText(), clientResponse.getEmotions().getFirst().getText());
     Assertions.assertEquals(1, clientResponse.getEmotions().size());
-    Assertions.assertEquals(EmotionType.MIDDLE, clientResponse.getEmotions().getFirst().getType());
+    Assertions.assertEquals("POSITIVE", clientResponse.getEmotions().getFirst().getType());
+    Assertions.assertEquals(0.91, clientResponse.getEmotions().getFirst().getScore());
     Assertions.assertEquals(mockEmotion.getId(), clientResponse.getEmotions().getFirst().getId());
   }
 
@@ -109,12 +110,12 @@ class AppMapperTest {
 
     // Verify the results
     Assertions.assertEquals(mockEmotionRequest.getText(), emotion.getText());
-    Assertions.assertEquals(mockEmotionRequest.getType(), emotion.getType());
+    Assertions.assertNull(emotion.getType());
     Assertions.assertEquals(mockEmotionRequest.getClient().getEmail(), emotion.getClient().getEmail());
   }
 
   @Test
-  void mapEmotionRequestToEntitySuccessButEmotionTypeIsNull() {
+  void mapEmotionRequestToEntitySuccessWhenTypeIsNull() {
     // Prepare test data
     mockEmotionRequest.setType(null);
 
@@ -140,6 +141,7 @@ class AppMapperTest {
     // Verify the results
     Assertions.assertEquals(mockEmotion.getText(), emotionResponse.getText());
     Assertions.assertEquals(mockEmotion.getType(), emotionResponse.getType());
+    Assertions.assertEquals(mockEmotion.getScore(), emotionResponse.getScore());
     Assertions.assertEquals(mockEmotion.getId(), emotionResponse.getId());
     Assertions.assertEquals(mockEmotion.getClient().getEmail(), emotionResponse.getClient().getEmail());
   }

@@ -4,7 +4,6 @@ import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.jekdev.saappapi.base.EmotionType;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,7 +14,8 @@ import lombok.*;
  * This class is used to capture and persist emotional states associated with a specific client. Each emotion is
  * uniquely identified, categorized by its type, and linked to a client. Fields: - {@code id}: A unique, auto-generated
  * identifier for the emotion. - {@code text}: A description of the emotion, which is mandatory. - {@code type}: The
- * type of the emotion, provided by the {@link EmotionType} enum. This field is optional. - {@code client}: The client
+ * type of the emotion, provided by an external sentiment provider. This field is optional. - {@code client}: The
+ * client
  * associated with this emotion. This association is mandatory and uses a many-to-one relationship.
  */
 @Getter
@@ -35,7 +35,11 @@ public class Emotion {
 
     @Column(nullable = false)
     @Nullable
-    private EmotionType type;
+    private String type;
+
+    @Column(nullable = true)
+    @Nullable
+    private Double score;
 
     @ManyToOne(optional = false, cascade = { PERSIST, MERGE })
     @JoinColumn(name = "client_id", nullable = false)

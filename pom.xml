@@ -45,21 +45,18 @@
         <version.spotbugs-maven-plugin>4.9.8.2</version.spotbugs-maven-plugin>
 
         <!-- spring dependencies version -->
-        <version.spring-boot-starter-data-jdbc>4.1.0-M1</version.spring-boot-starter-data-jdbc>
-        <version.spring-boot-starter-data-jpa>4.1.0-M1</version.spring-boot-starter-data-jpa>
-        <version.spring-boot-starter-webmvc>4.1.0-M1</version.spring-boot-starter-webmvc>
-        <version.spring-boot-starter-web>4.1.0-M1</version.spring-boot-starter-web>
-        <version.spring-boot-starter-test>4.1.0-M1</version.spring-boot-starter-test>
-        <version.spring-boot-starter-data-jdbc-test>4.1.0-M1</version.spring-boot-starter-data-jdbc-test>
-        <version.spring-boot-starter-data-jpa-test>4.1.0-M1</version.spring-boot-starter-data-jpa-test>
-        <version.spring-boot-starter-webmvc-test>4.1.0-M1</version.spring-boot-starter-webmvc-test>
-        <version.spring-boot-devtools>4.1.0-M1</version.spring-boot-devtools>
         <version.springdoc-openapi-starter-webmvc-ui>3.0.1</version.springdoc-openapi-starter-webmvc-ui>
-        <version.spring-boot-starter-thymeleaf>4.0.1</version.spring-boot-starter-thymeleaf>
+
+        <!-- thymeleaf dependencies -->
+        <version.thymeleaf-layout-dialect>3.4.0</version.thymeleaf-layout-dialect>
 
         <!-- data base dependencies -->
         <version.mariadb-java-client>3.5.7</version.mariadb-java-client>
         <version.h2>2.4.240</version.h2>
+
+        <!-- webjars -->
+        <version.bootstrap>5.3.8</version.bootstrap>
+        <version.jquery>3.7.1</version.jquery>
 
         <!-- utilities dependencies -->
         <version.lombok>1.18.42</version.lombok>
@@ -69,68 +66,18 @@
         <dependencies>
             <!-- spring boot dependencies -->
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-jdbc</artifactId>
-                <version>${version.spring-boot-starter-data-jdbc}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-jpa</artifactId>
-                <version>${version.spring-boot-starter-data-jpa}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-webmvc</artifactId>
-                <version>${version.spring-boot-starter-webmvc}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <version>${version.spring-boot-starter-test}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-jdbc-test</artifactId>
-                <version>${version.spring-boot-starter-data-jdbc-test}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-jpa-test</artifactId>
-                <version>${version.spring-boot-starter-data-jpa-test}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-webmvc-test</artifactId>
-                <version>${version.spring-boot-starter-webmvc}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-devtools</artifactId>
-                <version>${version.spring-boot-devtools}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${version.springdoc-openapi-starter-webmvc-ui}</version>
                 <scope>compile</scope>
             </dependency>
+
+            <!-- thymeleaf dependencies -->
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>${version.spring-boot-starter-web}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-thymeleaf</artifactId>
-                <version>${version.spring-boot-starter-thymeleaf}</version>
+                <groupId>nz.net.ultraq.thymeleaf</groupId>
+                <artifactId>thymeleaf-layout-dialect</artifactId>
+                <version>${version.thymeleaf-layout-dialect}</version>
+                <scope>compile</scope>
             </dependency>
 
             <!-- data base dependencies -->
@@ -145,6 +92,20 @@
                 <artifactId>h2</artifactId>
                 <version>${version.h2}</version>
                 <scope>test</scope>
+            </dependency>
+
+            <!-- webjars -->
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>bootstrap</artifactId>
+                <version>${version.bootstrap}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.webjars.bower</groupId>
+                <artifactId>jquery</artifactId>
+                <version>${version.jquery}</version>
+                <scope>compile</scope>
             </dependency>
 
             <!-- utilities dependencies -->

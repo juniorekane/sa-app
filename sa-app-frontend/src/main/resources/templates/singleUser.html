@@ -1,0 +1,52 @@
+<!doctype html>
+<html
+        layout:decorate="~{fragment/layout}"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+>
+
+<body>
+
+<main layout:fragment="content">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Client-ID</th>
+            <th scope="col">E-Mail</th>
+            <th scope="col">Emotionen</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${client.id}"></td>
+            <td th:text="${client.email}"></td>
+            <td>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Emotions-ID</th>
+                        <th>Text</th>
+                        <th>Typ</th>
+                        <th>Score</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="emotion : ${client.emotions}">
+                        <td th:text="${emotion.id}"></td>
+                        <td th:text="${emotion.text}"></td>
+                        <td th:text="${emotion.type}"></td>
+                        <td th:text="${emotion.score}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <button type='button' onclick='window.history.back()'>Back</button>
+</main>
+
+</body>
+
+</html>
