@@ -1,7 +1,7 @@
 # SA-App (Sentiment Analysis Application)
 
 This application is a sentiment analysis application, which gives users the possibility to write some text.
-The given text will be analyzed and classified as a sentiment such as bad, happy or neutral.
+The given text is analyzed by an external sentiment provider and stored with label and confidence score.
 
 ## Table of Contents
 
@@ -21,12 +21,13 @@ The given text will be analyzed and classified as a sentiment such as bad, happy
 
 ## Features
 
-- Client management (create, search by ID)
-- Emotion tracking with three sentiment types: HAPPY, MIDDLE, BAD
+- Client management (create, list, search by ID)
+- Emotion management (create, list, delete)
+- External sentiment inference integration (label + score)
+- Thymeleaf frontend for end-to-end UI testing
 - RESTful API with JSON responses
 - Swagger/OpenAPI documentation
-- Input validation
-- Global exception handling
+- Input validation and global exception handling
 
 ## Tech Stack
 
@@ -95,6 +96,16 @@ sa-app/
    ./mvnw -pl sa-app-api spring-boot:run
    ```
 
+5. Run the frontend (second terminal):
+   ```bash
+   ./mvnw -pl sa-app-frontend spring-boot:run
+   ```
+
+6. Open the frontend:
+   ```text
+   http://localhost:8081/ui/client
+   ```
+
 ### Configuration
 
 The application can be configured via `application.properties`:
@@ -105,8 +116,17 @@ The application can be configured via `application.properties`:
 | `spring.jpa.hibernate.ddl-auto` | Database schema generation | `update` |
 | `server.servlet.context-path` | API context path | `/api` |
 | `springdoc.api-docs.path` | OpenAPI docs path | `/api-docs` |
+| `sentiment.api.base-url` | Base URL of external sentiment provider | `https://router.huggingface.co/hf-inference` |
+| `sentiment.api.model-path` | Model endpoint path | `/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english` |
+| `sentiment.api.token` | API token (recommended via env var) | `${SENTIMENT_API_TOKEN:}` |
 
 Database connection is configured for MariaDB on port `3307`.
+
+Set the token before starting the API:
+
+```bash
+export SENTIMENT_API_TOKEN='hf_your_token'
+```
 
 ## Docker
 
@@ -132,12 +152,13 @@ Once the application is running, access the API documentation at:
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/create` | Create a new client |
+| GET | `/find_all` | Get all clients |
 | GET | `/search/{id}` | Get client by ID |
 
 **Emotion Controller** (`/api/emotions`)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/create` | Create a new emotion |
+| POST | `/create` | Create a new emotion (sentiment is inferred externally) |
 | GET | `/all` | Get all emotions |
 | DELETE | `/delete/{id}` | Delete an emotion |
 

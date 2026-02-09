@@ -1,0 +1,57 @@
+<!doctype html>
+<html
+        layout:decorate="~{fragment/layout}"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+>
+
+<body>
+
+<main layout:fragment="content">
+    <h2>Feature Test Entry Point</h2>
+    <p>Use this page to test client and emotion features from one place.</p>
+
+    <h3>Client Features</h3>
+
+    <form method="post" th:action="@{/ui/new/client}" th:object="${clientRequest}">
+        <label for="email">Create client by e-mail</label>
+        <input id="email" type="email" th:field="*{email}" name="email" placeholder="client@example.com" required/>
+        <button type="submit">Create client</button>
+        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+    </form>
+
+    <div th:if="${status != null}">
+        Last status: <span th:text="${status}"></span>
+    </div>
+
+    <form th:action="@{/ui/client/all}" method="get">
+        <button type="submit">List all clients</button>
+    </form>
+
+    <form th:action="@{/ui/client/find}" method="get">
+        <label for="clientId">Find single client by ID</label>
+        <input type="number" id="clientId" name="id" min="1" required>
+        <button type="submit">Find client</button>
+    </form>
+
+    <h3>Emotion Features</h3>
+
+    <form th:action="@{/ui/emotions}" method="get">
+        <button type="submit">Open create emotion page</button>
+    </form>
+
+    <form th:action="@{/ui/emotions/all}" method="get">
+        <button type="submit">List all emotions</button>
+    </form>
+
+    <form th:action="@{/ui/emotions/delete}" method="post">
+        <label for="emotionId">Delete emotion by ID</label>
+        <input type="number" id="emotionId" name="id" min="1" required>
+        <button type="submit">Delete emotion</button>
+    </form>
+
+</main>
+
+</body>
+
+</html>

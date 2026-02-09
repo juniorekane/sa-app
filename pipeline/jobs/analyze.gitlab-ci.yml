@@ -20,7 +20,7 @@ pmd_lint_job:
 SpotBugs:
   extends: .analyze-base
   script:
-    - mvn $MAVEN_CLI_OPTS spotbugs:spotbugs
+    - mvn $MAVEN_CLI_OPTS compile spotbugs:spotbugs
   artifacts:
     expire_in: "1 week"
     when: always

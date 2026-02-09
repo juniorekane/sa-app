@@ -60,6 +60,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(value = SentimentProviderException.class, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, String>> handleSentimentProviderException(SentimentProviderException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(Map.of("error", ex.getMessage()));
+    }
+
     /**
      * Handles {@code MethodArgumentNotValidException} thrown within the application. This method processes validation
      * errors, retrieves the first validation error message, and constructs a standardized JSON response containing

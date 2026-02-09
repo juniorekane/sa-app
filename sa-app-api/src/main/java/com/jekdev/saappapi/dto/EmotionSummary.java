@@ -1,6 +1,5 @@
 package com.jekdev.saappapi.dto;
 
-import com.jekdev.saappapi.base.EmotionType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -10,8 +9,8 @@ import lombok.RequiredArgsConstructor;
  * events within the application.
  * <p>
  * The {@code EmotionSummary} class includes the following attributes: - {@code id}: A unique identifier for the emotion
- * entry. - {@code text}: A textual description or representation of the emotion. - {@code type}: The type of emotion,
- * categorized using the {@code EmotionType} enumeration.
+ * entry. - {@code text}: A textual description or representation of the emotion. - {@code type}: The type label from
+ * the external sentiment provider.
  * <p>
  * This class is typically used in scenarios requiring a lightweight aggregation of emotion data, such as summarizing
  * emotions linked to a specific client or context. It facilitates efficient data encapsulation and transfer across
@@ -28,5 +27,7 @@ public class EmotionSummary {
 
     private final String text;
 
-    private final EmotionType type;
+    private final String type;
+
+    private final Double score;
 }

@@ -43,6 +43,7 @@ public class EmotionService {
     private final AppMapper appMapper;
 
     private final EmotionRepository emotionRepository;
+    private final SentimentAnalysisService sentimentAnalysisService;
 
     /**
      * Creates a new {@link Emotion} entity or retrieves an existing one. This method processes the provided
@@ -56,12 +57,17 @@ public class EmotionService {
         Emotion emotion = appMapper.mapEmotionRequestToEntity(emotionRequest);
         Client client = clientService.readOrCreateClient(emotion.getClient());
         emotion.setClient(client);
+
         if (emotionRepository.findByText(emotion.getText()).isPresent()) {
             log.debug("Emotion Already exists");
             throw new PresentElementException("Emotion already exists. Please use a different text.");
         } else {
+            var sentiment = sentimentAnalysisService.analyze(emotion.getText());
+            emotion.setType(sentiment.label());
+            emotion.setScore(sentiment.score());
             emotionRepository.save(emotion);
-            log.info("Emotion saved with id: {}", emotion.getId());
+            log.info("Emotion saved with id: {} label: {} score: {}", emotion.getId(), emotion.getType(),
+                    emotion.getScore());
         }
     }
 

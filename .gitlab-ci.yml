@@ -48,7 +48,7 @@ include:
         when: always
       - if: $GITLAB_CI == "false"
         when: always
-      - when: never
+      - when: always
   - local: pipeline/jobs/deploy.gitlab-ci.yml
     rules:
       - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -57,7 +57,7 @@ include:
         when: always
       - if: $GITLAB_CI == "false"
         when: always
-      - when: never
+      - when: always
 
 # This job is necessary because GitLab checks the existence of at least one job before realizing that the workflow defines that no pipeline shall run
 ghost:
