@@ -8,17 +8,45 @@
 <body>
 
 <div layout:fragment="content">
-    <h1>Error page</h1>
-    <div th:if="${statusCode != null}"> Status Code: <span th:text="${statusCode}"></span></div>
-    <br>
-    <div th:if="${statusText != null}">Status text: <span th:text="${statusText}"></span></div>
-    <br>
-    <div th:if="${errorMessage != null}">Message: <span th:text="${errorMessage}"></span></div>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6" style="max-width: 600px;">
+                <div class="text-center">
+                    <!-- Status Code Display -->
+                    <div th:if="${statusCode != null}">
+                        <h1 class="display-1 fw-bold text-danger mb-3" th:text="${statusCode}">500</h1>
+                    </div>
 
+                    <!-- Error Heading -->
+                    <h2 class="h3 mb-4">Oops! Something went wrong</h2>
 
-    <button type='button' onclick='window.history.back()'>Back</button>
+                    <!-- Error Details Alert -->
+                    <div class="alert alert-danger text-start" role="alert">
+                        <div th:if="${statusText != null}" class="mb-2">
+                            <strong>Status:</strong> <span th:text="${statusText}">Internal Server Error</span>
+                        </div>
+                        <div th:if="${errorMessage != null}">
+                            <strong>Message:</strong> <span th:text="${errorMessage}">An unexpected error occurred</span>
+                        </div>
+                        <div th:if="${statusCode == null && statusText == null && errorMessage == null}">
+                            <strong>An unexpected error occurred.</strong> Please try again later.
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-center gap-2 mt-4">
+                        <button type="button" class="btn btn-outline-dark" onclick="window.history.back()">
+                            <i class="bi bi-arrow-left"></i> Go Back
+                        </button>
+                        <a th:href="@{/ui/client}" class="btn btn-primary">
+                            <i class="bi bi-house"></i> Go Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
 
 </body>
 </html>

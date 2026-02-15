@@ -8,20 +8,32 @@
 <body>
 
 <main layout:fragment="content">
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Client-ID</th>
-            <th scope="col">E-Mail</th>
-            <th scope="col">Emotionen</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td th:text="${client.id}"></td>
-            <td th:text="${client.email}"></td>
-            <td>
-                <table>
+    <h2 class="mb-4">Client Details</h2>
+
+    <!-- Client Information Card -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Client Information
+        </div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Client ID</dt>
+                <dd class="col-sm-9" th:text="${client.id}">12345</dd>
+
+                <dt class="col-sm-3">E-Mail</dt>
+                <dd class="col-sm-9" th:text="${client.email}">client@example.com</dd>
+            </dl>
+        </div>
+    </div>
+
+    <!-- Emotions Card -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Emotions
+        </div>
+        <div class="card-body">
+            <div class="table-responsive" th:if="${client.emotions != null and !client.emotions.isEmpty()}">
+                <table class="table table-striped table-hover table-sm">
                     <thead>
                     <tr>
                         <th>Emotions-ID</th>
@@ -32,19 +44,25 @@
                     </thead>
                     <tbody>
                     <tr th:each="emotion : ${client.emotions}">
-                        <td th:text="${emotion.id}"></td>
-                        <td th:text="${emotion.text}"></td>
-                        <td th:text="${emotion.type}"></td>
-                        <td th:text="${emotion.score}"></td>
+                        <td th:text="${emotion.id}">1</td>
+                        <td th:text="${emotion.text}">Sample text</td>
+                        <td th:text="${emotion.type}">POSITIVE</td>
+                        <td th:text="${emotion.score}">0.95</td>
                     </tr>
                     </tbody>
                 </table>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+            </div>
+            <p class="text-muted mb-0" th:if="${client.emotions == null or client.emotions.isEmpty()}">
+                No emotions found for this client.
+            </p>
+        </div>
+    </div>
 
-    <button type='button' onclick='window.history.back()'>Back</button>
+    <!-- Navigation Buttons -->
+    <div class="d-flex gap-2 mt-3">
+        <button type="button" class="btn btn-outline-dark" onclick="window.history.back()">Back</button>
+        <a th:href="@{/ui/client/all}" class="btn btn-outline-primary">All Clients</a>
+    </div>
 </main>
 
 </body>

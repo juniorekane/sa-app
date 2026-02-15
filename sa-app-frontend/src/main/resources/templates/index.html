@@ -8,48 +8,118 @@
 <body>
 
 <main layout:fragment="content">
-    <h2>Feature Test Entry Point</h2>
-    <p>Use this page to test client and emotion features from one place.</p>
-
-    <h3>Client Features</h3>
-
-    <form method="post" th:action="@{/ui/new/client}" th:object="${clientRequest}">
-        <label for="email">Create client by e-mail</label>
-        <input id="email" type="email" th:field="*{email}" name="email" placeholder="client@example.com" required/>
-        <button type="submit">Create client</button>
-        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-    </form>
-
-    <div th:if="${status != null}">
-        Last status: <span th:text="${status}"></span>
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h2 class="display-6">Feature Test Entry Point</h2>
+        <p class="lead text-muted">Use this page to test client and emotion features from one place.</p>
     </div>
 
-    <form th:action="@{/ui/client/all}" method="get">
-        <button type="submit">List all clients</button>
-    </form>
+    <!-- Status Alert -->
+    <div th:if="${status != null}" class="alert alert-info alert-dismissible fade show" role="alert">
+        <strong>Last status:</strong> <span th:text="${status}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 
-    <form th:action="@{/ui/client/find}" method="get">
-        <label for="clientId">Find single client by ID</label>
-        <input type="number" id="clientId" name="id" min="1" required>
-        <button type="submit">Find client</button>
-    </form>
+    <!-- Two Column Layout -->
+    <div class="row g-4">
+        <!-- Client Features Card -->
+        <div class="col-12 col-md-6">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="h5 mb-0">Client Features</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Create Client Form -->
+                    <form method="post" th:action="@{/ui/new/client}" th:object="${clientRequest}" class="mb-4">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Create client by e-mail</label>
+                            <input id="email"
+                                   type="email"
+                                   th:field="*{email}"
+                                   name="email"
+                                   class="form-control"
+                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                                   placeholder="client@example.com"
+                                   required/>
+                            <div th:if="${#fields.hasErrors('email')}"
+                                 th:errors="*{email}"
+                                 class="invalid-feedback"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Create client</button>
+                    </form>
 
-    <h3>Emotion Features</h3>
+                    <hr class="my-4">
 
-    <form th:action="@{/ui/emotions}" method="get">
-        <button type="submit">Open create emotion page</button>
-    </form>
+                    <!-- List All Clients Form -->
+                    <form th:action="@{/ui/client/all}" method="get" class="mb-3">
+                        <button type="submit" class="btn btn-outline-secondary w-100">
+                            List all clients
+                        </button>
+                    </form>
 
-    <form th:action="@{/ui/emotions/all}" method="get">
-        <button type="submit">List all emotions</button>
-    </form>
+                    <!-- Find Client by ID Form -->
+                    <form th:action="@{/ui/client/find}" method="get">
+                        <div class="mb-3">
+                            <label for="clientId" class="form-label">Find single client by ID</label>
+                            <div class="input-group">
+                                <input type="number"
+                                       id="clientId"
+                                       name="id"
+                                       class="form-control"
+                                       placeholder="Enter client ID"
+                                       min="1"
+                                       required>
+                                <button type="submit" class="btn btn-outline-secondary">Find client</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-    <form th:action="@{/ui/emotions/delete}" method="post">
-        <label for="emotionId">Delete emotion by ID</label>
-        <input type="number" id="emotionId" name="id" min="1" required>
-        <button type="submit">Delete emotion</button>
-    </form>
+        <!-- Emotion Features Card -->
+        <div class="col-12 col-md-6">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="h5 mb-0">Emotion Features</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Open Create Emotion Page Form -->
+                    <form th:action="@{/ui/emotions}" method="get" class="mb-3">
+                        <button type="submit" class="btn btn-primary w-100">
+                            Open create emotion page
+                        </button>
+                    </form>
 
+                    <!-- List All Emotions Form -->
+                    <form th:action="@{/ui/emotions/all}" method="get" class="mb-4">
+                        <button type="submit" class="btn btn-outline-secondary w-100">
+                            List all emotions
+                        </button>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <!-- Delete Emotion by ID Form -->
+                    <form th:action="@{/ui/emotions/delete}" method="post">
+                        <div class="mb-3">
+                            <label for="emotionId" class="form-label">Delete emotion by ID</label>
+                            <div class="input-group">
+                                <input type="number"
+                                       id="emotionId"
+                                       name="id"
+                                       class="form-control"
+                                       placeholder="Enter emotion ID"
+                                       min="1"
+                                       required>
+                                <button type="submit" class="btn btn-outline-danger">Delete emotion</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 </body>

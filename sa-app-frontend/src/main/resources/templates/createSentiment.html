@@ -8,28 +8,46 @@
 <body>
 
 <main layout:fragment="content">
-    <form method="post" th:action="@{/ui/emotions/create}" th:object="${emotionRequest}">
-        <label for="text">Text</label>
-        <input id="text" type="text" th:field="*{text}" name="text" placeholder="Text" required/>
-        <div th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div>
-        <p>Sentiment type is detected automatically by the external API.</p>
+    <h2 class="mb-4">Create Emotion</h2>
 
-        <label for="clientEmail">Client E-mail</label>
-        <input id="clientEmail" type="email" th:field="*{client.email}" name="client.email" placeholder="E-mail" required/>
-        <div th:if="${#fields.hasErrors('client.email')}" th:errors="*{client.email}"></div>
+    <div class="card mx-auto" style="max-width: 600px;">
+        <div class="card-header">
+            <h5 class="mb-0">Emotion Details</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" th:action="@{/ui/emotions/create}" th:object="${emotionRequest}">
+                <div class="mb-3">
+                    <label for="text" class="form-label">Text</label>
+                    <textarea id="text" class="form-control" th:field="*{text}" name="text"
+                              placeholder="Enter text for sentiment analysis..." rows="3" required></textarea>
+                    <div th:if="${#fields.hasErrors('text')}" th:errors="*{text}" class="text-danger small"></div>
+                    <div class="alert alert-info mt-2 mb-0" role="alert">
+                        <small>Sentiment type is detected automatically by the external API.</small>
+                    </div>
+                </div>
 
-        <button type="submit">Create emotion</button>
-    </form>
+                <div class="mb-3">
+                    <label for="clientEmail" class="form-label">Client E-mail</label>
+                    <input id="clientEmail" type="email" class="form-control" th:field="*{client.email}"
+                           name="client.email" placeholder="client@example.com" required/>
+                    <div th:if="${#fields.hasErrors('client.email')}" th:errors="*{client.email}" class="text-danger small"></div>
+                </div>
 
-    <div th:if="${status != null}">
-        Status: <span th:text="${status}"></span>
+                <button type="submit" class="btn btn-primary w-100">Create Emotion</button>
+            </form>
+        </div>
     </div>
 
-    <form th:action="@{/ui/emotions/all}" method="get">
-        <button type="submit">List all emotions</button>
-    </form>
+    <div th:if="${status != null}" class="alert alert-info mx-auto mt-3" style="max-width: 600px;" role="alert">
+        <strong>Status:</strong> <span th:text="${status}"></span>
+    </div>
 
-    <button type='button' onclick='window.history.back()'>Back</button>
+    <div class="d-flex gap-2 justify-content-center mt-3">
+        <form th:action="@{/ui/emotions/all}" method="get" class="m-0">
+            <button type="submit" class="btn btn-outline-secondary">List All Emotions</button>
+        </form>
+        <button type="button" onclick="window.history.back()" class="btn btn-outline-dark">Back</button>
+    </div>
 
 </main>
 
