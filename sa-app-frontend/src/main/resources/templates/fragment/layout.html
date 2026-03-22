@@ -2,21 +2,57 @@
 <html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script th:src="@{/webjars/jquery/3.7.1/dist/jquery.min.js}"></script>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.8/css/bootstrap.min.css}"/>
     <title layout:title-pattern="$CONTENT_TITLE">SA APP</title>
 </head>
-<body>
+<body class="bg-light d-flex flex-column min-vh-100">
 
-<h1>Welcome To SA APP</h1>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/ui/client}">SA APP</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/ui/client}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/ui/client/all}">Clients</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/ui/emotions/all}">Emotions</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-<main layout:fragment="content">
-    <!-- will be replaced -->
-</main>
+<!-- Main Content -->
+<div class="container mt-4 flex-grow-1">
+    <main layout:fragment="content">
+        <!-- Page content will be replaced here -->
+        <div class="text-center mt-5">
+            <h1>Welcome To SA APP</h1>
+            <p class="lead">This is a placeholder. Page content will be inserted here.</p>
+        </div>
+    </main>
+</div>
 
-<footer>
-    <small>© 2026</small>
+<!-- Footer -->
+<footer class="bg-dark text-light py-3 mt-auto">
+    <div class="container text-center">
+        <small>&copy; 2026 SA APP. All rights reserved.</small>
+    </div>
 </footer>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

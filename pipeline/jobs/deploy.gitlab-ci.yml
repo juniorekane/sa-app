@@ -1,40 +1,31 @@
-example-publish-frontend:
-  image: $ALPINE_IMAGE
-  stage: deploy
-  when: manual
-  needs:
-    - job: build-docker-frontend
-      artifacts: true
-  script:
-    - echo "i should publish an docker image"
-
-example-publish-backend:
-  image: $ALPINE_IMAGE
-  stage: deploy
-  when: manual
-  needs:
-    - job: build-docker-api
-      artifacts: true
-  script:
-    - echo "i should publish an docker image"
-
+.deploy-base:
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: [""]
+  before_script:
+    - mkdir -p ~/.kube
+    - echo "$KUBECONFIG_CONTENT" | base64 -d > ~/.kube/config
+    - chmod 600 ~/.kube/config
+    - kubectl cluster-info
 
 deploy-api:
-  image: $ALPINE_IMAGE
+  extends: .deploy-base
   stage: deploy
-  when: manual
+  environment:
+    name: production
+    url: https://sa-app.jek-dev.com
   needs:
     - job: build-docker-api
-      artifacts: true
+      artifacts: false
   script:
-    - echo "test deploy"
-
-deploy-ui:
-  image: $ALPINE_IMAGE
-  stage: deploy
-  when: manual
-  needs:
-    - job: build-docker-frontend
-      artifacts: true
-  script:
-    - echo "test deploy"
+    - kubectl apply -f k8s/deployment.yml
+    - |
+      kubectl set image deployment/sa-app-api \
+        sa-app-api=$CI_REGISTRY_IMAGE/api:$CI_COMMIT_SHA \
+        -n sa-app
+    - kubectl rollout status deployment/sa-app-api -n sa-app --timeout=300s
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_REF_PROTECTED == "true"
+      when: manual

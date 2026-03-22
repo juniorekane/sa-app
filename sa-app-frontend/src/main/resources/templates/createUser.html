@@ -9,15 +9,42 @@
 
 <main layout:fragment="content">
 
-    <form method="POST" th:action="@{/ui/new/client}" th:object="${clientRequest}">
-        <label for="email">E-mail</label>
-        <input id="email" type="email" th:field="*{email}" name="email" placeholder="E-mail" required/>
-        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-        <button type="submit">Create</button>
-    </form>
+    <h2 class="mb-4">Create New Client</h2>
 
-    <div th:if="${status != null}">
-        Status: <span th:text="${status}"></span>
+    <!-- Status Message -->
+    <div th:if="${status != null}" class="alert alert-info alert-dismissible fade show" role="alert">
+        <strong>Status:</strong> <span th:text="${status}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card mx-auto" style="max-width: 500px;">
+        <div class="card-header">
+            <h5 class="mb-0">Client Details</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" th:action="@{/ui/new/client}" th:object="${clientRequest}">
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-mail</label>
+                    <input
+                        id="email"
+                        type="email"
+                        th:field="*{email}"
+                        name="email"
+                        class="form-control"
+                        th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                        placeholder="Enter client email address"
+                        required
+                    />
+                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger small mt-1"></div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                    <a th:href="@{/ui/client}" class="btn btn-outline-secondary">Back to Home</a>
+                </div>
+            </form>
+        </div>
     </div>
 
 </main>
