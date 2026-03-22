@@ -1,0 +1,249 @@
+---
+# =============================================================================
+# SA-App Kubernetes Deployment
+# =============================================================================
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sa-app
+  labels:
+    app.kubernetes.io/name: sa-app
+    app.kubernetes.io/part-of: sentiment-analysis
+
+---
+# =============================================================================
+# ConfigMap - Anwendungskonfiguration
+# =============================================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sa-app-config
+  namespace: sa-app
+data:
+  SPRING_PROFILES_ACTIVE: "prod"
+  SERVER_PORT: "8080"
+  # Logging
+  LOGGING_LEVEL_ROOT: "INFO"
+  LOGGING_LEVEL_COM_JEKDEV: "DEBUG"
+
+---
+# =============================================================================
+# Secret - Datenbank-Credentials
+# =============================================================================
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sa-app-db-secret
+  namespace: sa-app
+type: Opaque
+stringData:
+  SPRING_DATASOURCE_URL: "jdbc:mariadb://sa-app-mariadb:3306/sa_app"
+  SPRING_DATASOURCE_USERNAME: "sa_app"
+  SPRING_DATASOURCE_PASSWORD: "ChangeMe!SecurePassword123"
+  MARIADB_ROOT_PASSWORD: "RootChangeMe!456"
+  MARIADB_DATABASE: "sa_app"
+  MARIADB_USER: "sa_app"
+  MARIADB_PASSWORD: "ChangeMe!SecurePassword123"
+
+---
+# =============================================================================
+# MariaDB - StatefulSet mit Persistent Volume
+# =============================================================================
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sa-app-mariadb
+  namespace: sa-app
+spec:
+  serviceName: sa-app-mariadb
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sa-app-mariadb
+  template:
+    metadata:
+      labels:
+        app: sa-app-mariadb
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb:11.4
+          ports:
+            - containerPort: 3306
+              name: mysql
+          envFrom:
+            - secretRef:
+                name: sa-app-db-secret
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: mariadb-data
+              mountPath: /var/lib/mysql
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "mariadb-admin ping -u root -p${MARIADB_ROOT_PASSWORD}"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "mariadb -u root -p${MARIADB_ROOT_PASSWORD} -e 'SELECT 1'"
+            initialDelaySeconds: 10
+            periodSeconds: 5
+  volumeClaimTemplates:
+    - metadata:
+        name: mariadb-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 5Gi
+
+---
+# =============================================================================
+# MariaDB Service (Headless für StatefulSet)
+# =============================================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: sa-app-mariadb
+  namespace: sa-app
+spec:
+  clusterIP: None
+  selector:
+    app: sa-app-mariadb
+  ports:
+    - port: 3306
+      targetPort: 3306
+      name: mysql
+
+---
+# =============================================================================
+# SA-App API - Deployment
+# =============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sa-app-api
+  namespace: sa-app
+  labels:
+    app: sa-app-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sa-app-api
+  template:
+    metadata:
+      labels:
+        app: sa-app-api
+    spec:
+      # Registry Pull Secret (für private GitLab Registry)
+      imagePullSecrets:
+        - name: gitlab-registry-secret
+      containers:
+        - name: sa-app-api
+          image: registry.jek-dev.com/junior/sa-app/api:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+          envFrom:
+            - configMapRef:
+                name: sa-app-config
+            - secretRef:
+                name: sa-app-db-secret
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 30
+
+---
+# =============================================================================
+# SA-App API Service
+# =============================================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: sa-app-api
+  namespace: sa-app
+spec:
+  type: ClusterIP
+  selector:
+    app: sa-app-api
+  ports:
+    - port: 80
+      targetPort: 8080
+      name: http
+
+---
+# =============================================================================
+# Ingress - Traefik Routing
+# =============================================================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sa-app-ingress
+  namespace: sa-app
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: sa-app.jek-dev.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sa-app-api
+                port:
+                  number: 80
+    # Alternative: API direkt unter /api
+    - host: api.jek-dev.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sa-app-api
+                port:
+                  number: 80
