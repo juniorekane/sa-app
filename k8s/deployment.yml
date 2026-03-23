@@ -214,6 +214,86 @@ spec:
 
 ---
 # =============================================================================
+# SA-App Frontend - Deployment
+# =============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sa-app-frontend
+  namespace: sa-app
+  labels:
+    app: sa-app-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sa-app-frontend
+  template:
+    metadata:
+      labels:
+        app: sa-app-frontend
+    spec:
+      imagePullSecrets:
+        - name: gitlab-registry-secret
+      containers:
+        - name: sa-app-frontend
+          image: registry.jek-dev.com/junior/sa-app/frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+          envFrom:
+            - configMapRef:
+                name: sa-app-config
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 30
+
+---
+# =============================================================================
+# SA-App Frontend Service
+# =============================================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: sa-app-frontend
+  namespace: sa-app
+spec:
+  type: ClusterIP
+  selector:
+    app: sa-app-frontend
+  ports:
+    - port: 80
+      targetPort: 8080
+      name: http
+
+---
+# =============================================================================
 # Ingress - Traefik Routing
 # =============================================================================
 apiVersion: networking.k8s.io/v1
@@ -236,7 +316,6 @@ spec:
                 name: sa-app-api
                 port:
                   number: 80
-    # Alternative: API direkt unter /api
     - host: api.jek-dev.com
       http:
         paths:
@@ -245,5 +324,15 @@ spec:
             backend:
               service:
                 name: sa-app-api
+                port:
+                  number: 80
+    - host: frontend.jek-dev.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sa-app-frontend
                 port:
                   number: 80
