@@ -1,202 +1,253 @@
 # SA-App (Sentiment Analysis Application)
 
-This application is a sentiment analysis application, which gives users the possibility to write some text.
-The given text is analyzed by an external sentiment provider and stored with label and confidence score.
+SA-App is a multi-module Spring Boot project with:
 
-## Table of Contents
+- `sa-app-api`: REST backend for clients and emotions
+- `sa-app-frontend`: Thymeleaf UI to test all backend features end-to-end
 
-1. [Features](#features)
-2. [Tech Stack](#tech-stack)
-3. [Structure of the Project](#structure-of-the-project)
-4. [Getting Started](#getting-started)
-    1. [Requirements](#requirements)
-    2. [Installation](#installation)
-    3. [Configuration](#configuration)
-5. [Docker](#docker)
-6. [API Documentation](#api-documentation)
-7. [CI/CD](#cicd)
-8. [Architecture](#architecture)
-9. [Contributing](#contributing)
-10. [License](#license)
+Emotion labels are not manually selected anymore. They are resolved by an external sentiment API and stored with a confidence score.
 
-## Features
+## Current Scope
 
-- Client management (create, list, search by ID)
-- Emotion management (create, list, delete)
-- External sentiment inference integration (label + score)
-- Thymeleaf frontend for end-to-end UI testing
-- RESTful API with JSON responses
-- Swagger/OpenAPI documentation
-- Input validation and global exception handling
+### Backend (`sa-app-api`)
+
+- Create, list, and search clients
+- Create, list, and delete emotions
+- External sentiment lookup (label + score) during emotion creation
+- JSON error handling (`409`, `400`, `502`)
+- OpenAPI/Swagger endpoints
+
+### Frontend (`sa-app-frontend`)
+
+- Entry page at `http://localhost:8081/ui/client`
+- UI flows for:
+  - create client
+  - list all clients
+  - find single client by ID
+  - create emotion (text + client email)
+  - list all emotions
+  - delete emotion by ID
+- Dedicated error page for backend/API failures
 
 ## Tech Stack
 
-- **Java 21**
-- **Spring Boot 4.0.1**
-- **MariaDB** - Database for persistent storage
-- **H2** - In-memory database for testing
-- **Lombok** - Reduces boilerplate code (constructors, getters, setters)
-- **Docker** - Runtime environment for database, frontend, and backend API
-- **Thymeleaf** - Template engine for the frontend
-- **SpringDoc OpenAPI** - API documentation
-- **GitLab CI/CD** - Pipeline for merge requests and deployment
+- Java 21
+- Spring Boot 4.0.1
+- Spring MVC + Thymeleaf
+- Spring Data JPA
+- MariaDB (local profile)
+- Lombok
+- SpringDoc OpenAPI
+- Maven (multi-module)
+- GitLab CI/CD + Jib
 
-## Structure of the Project
+## Project Structure
 
-This is a multi-module Maven project:
-
-```
+```text
 sa-app/
-├── pom.xml                    # Parent POM with dependency management
-├── sa-app-api/                # Backend REST API module
+├── pom.xml
+├── sa-app-api/
 │   ├── pom.xml
-│   └── src/main/java/com/jekdev/saappapi/
-│       ├── controller/        # REST controllers
-│       ├── service/           # Business logic
-│       ├── repositories/      # Data access layer
-│       ├── entities/          # JPA entities
-│       ├── dto/               # Data transfer objects
-│       ├── mapper/            # Entity-DTO mappers
-│       ├── errorhandling/     # Exception handlers
-│       └── base/              # Enums and base classes
-├── sa-app-frontend/           # Frontend module (Thymeleaf)
+│   └── src/main/
+│       ├── java/com/jekdev/saappapi/
+│       │   ├── base/
+│       │   ├── controller/
+│       │   ├── dto/
+│       │   ├── entities/
+│       │   ├── errorhandling/
+│       │   ├── mapper/
+│       │   ├── repositories/
+│       │   ├── service/
+│       │   └── utils/
+│       └── resources/
+│           ├── application.properties
+│           ├── application-local.properties
+│           └── docker-compose.yml
+├── sa-app-frontend/
 │   ├── pom.xml
-│   └── src/main/resources/
-└── pipeline/                  # GitLab CI/CD configuration
+│   └── src/main/
+│       ├── java/com/jekdev/saappfrontend/
+│       │   ├── config/
+│       │   ├── controller/
+│       │   ├── dto/
+│       │   ├── errorhandling/
+│       │   └── service/
+│       └── resources/
+│           ├── application.properties
+│           └── templates/
+└── pipeline/
+    └── jobs/
 ```
 
-## Getting Started
+## Configuration
 
-### Requirements
-
-- Java 21 or higher
-- Maven 3.9+
-- Docker and Docker Compose (for database)
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd sa-app
-   ```
-
-2. Start the database using Docker:
-   ```bash
-   docker compose -f sa-app-api/src/main/resources/docker-compose.yml up -d
-   ```
-
-3. Build the project:
-   ```bash
-   ./mvnw clean install
-   ```
-
-4. Run the API:
-   ```bash
-   ./mvnw -pl sa-app-api spring-boot:run
-   ```
-
-5. Run the frontend (second terminal):
-   ```bash
-   ./mvnw -pl sa-app-frontend spring-boot:run
-   ```
-
-6. Open the frontend:
-   ```text
-   http://localhost:8081/ui/client
-   ```
-
-### Configuration
-
-The application can be configured via `application.properties`:
+### Backend properties (`sa-app-api`)
 
 | Property | Description | Default |
-|----------|-------------|---------|
-| `spring.application.name` | Application name | `sa-app-api` |
-| `spring.jpa.hibernate.ddl-auto` | Database schema generation | `update` |
-| `server.servlet.context-path` | API context path | `/api` |
-| `springdoc.api-docs.path` | OpenAPI docs path | `/api-docs` |
-| `sentiment.api.base-url` | Base URL of external sentiment provider | `https://router.huggingface.co/hf-inference` |
-| `sentiment.api.model-path` | Model endpoint path | `/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english` |
-| `sentiment.api.token` | API token (recommended via env var) | `${SENTIMENT_API_TOKEN:}` |
+|---|---|---|
+| `server.servlet.context-path` | API base path | `/api` |
+| `springdoc.api-docs.path` | OpenAPI JSON path | `/api-docs` |
+| `sentiment.api.base-url` | External sentiment base URL | `https://router.huggingface.co/hf-inference` |
+| `sentiment.api.model-path` | Provider model path | `/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english` |
+| `sentiment.api.token` | Provider token property | `${SENTIMENT_API_TOKEN:}` |
 
-Database connection is configured for MariaDB on port `3307`.
+### Backend profile for DB (`local`)
 
-Set the token before starting the API:
+`application-local.properties` contains:
 
-```bash
-export SENTIMENT_API_TOKEN='hf_your_token'
-```
+- `spring.datasource.url=jdbc:mariadb://localhost:3307/spring_db`
+- `spring.datasource.username=spring`
+- `spring.datasource.password=spring`
 
-## Docker
+Without the `local` profile (or another datasource config), the API does not start because no datasource URL is defined.
 
-The project includes a `docker-compose.yml` for local development:
+### Frontend backend target
+
+Frontend calls backend via `RestClient` base URL:
+
+- `http://localhost:8080`
+
+If your backend runs on another host/port, adjust:
+
+- `sa-app-frontend/src/main/java/com/jekdev/saappfrontend/config/ApiClientConfig.java`
+
+## Local Run
+
+### 1) Start MariaDB (required for the `local` profile run command below)
 
 ```bash
 docker compose -f sa-app-api/src/main/resources/docker-compose.yml up -d
 ```
 
-Services:
-- **MariaDB** - Port 3307 (user: `spring`, password: `spring`, database: `spring_db`)
-- **Adminer** - Port 8180 (database management UI)
+Provided services:
 
-## API Documentation
+- MariaDB on `localhost:3307`
+- Adminer on `http://localhost:8180`
 
-Once the application is running, access the API documentation at:
-- Swagger UI: `http://localhost:8080/api/swagger-ui.html`
+### 2) Set sentiment API token
+
+Linux/macOS:
+
+```bash
+export SENTIMENT_API_TOKEN='hf_your_token'
+```
+
+Windows (PowerShell):
+
+```powershell
+$env:SENTIMENT_API_TOKEN='hf_your_token'
+```
+
+IntelliJ:
+
+- Open Run Configuration for `SaAppApiApplication`
+- Add environment variable `SENTIMENT_API_TOKEN=hf_your_token`
+- Add VM option `-Dspring.profiles.active=local` (or set active profile in IDE)
+
+### 3) Run backend
+
+```bash
+mvn -pl sa-app-api spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+### 4) Run frontend (second terminal)
+
+```bash
+mvn -pl sa-app-frontend spring-boot:run
+```
+
+### 5) Open UI
+
+- Frontend entry page: `http://localhost:8081/ui/client`
+- Swagger UI: `http://localhost:8080/api/swagger-ui/index.html`
 - OpenAPI JSON: `http://localhost:8080/api/api-docs`
 
-### Endpoints
+## Backend API Endpoints
 
-**Client Controller** (`/api/client`)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/create` | Create a new client |
-| GET | `/find_all` | Get all clients |
-| GET | `/search/{id}` | Get client by ID |
+All backend endpoints are under `/api` (context path).
 
-**Emotion Controller** (`/api/emotions`)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/create` | Create a new emotion (sentiment is inferred externally) |
-| GET | `/all` | Get all emotions |
-| DELETE | `/delete/{id}` | Delete an emotion |
+### Client endpoints
 
-## CI/CD
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/api/client/create` | Create a client |
+| `GET` | `/api/client/find_all` | List all clients |
+| `GET` | `/api/client/search/{id}` | Get one client by ID |
 
-The project uses GitLab CI/CD with the following stages:
+Create client payload:
 
-1. **prepare** - Setup and preparation
-2. **test** - Run tests
-3. **build** - Compile and package
-4. **sast** - Static application security testing
-5. **publish** - Publish artifacts
-
-Pipeline configuration is in `.gitlab-ci.yml` and `pipeline/build.gitlab-ci.yml`.
-
-## Architecture
-
-The application follows a layered architecture:
-
-```
-┌─────────────────────────────────────┐
-│           Controllers               │  ← REST endpoints
-├─────────────────────────────────────┤
-│            Services                 │  ← Business logic
-├─────────────────────────────────────┤
-│           Repositories              │  ← Data access (JPA)
-├─────────────────────────────────────┤
-│            Database                 │  ← MariaDB
-└─────────────────────────────────────┘
+```json
+{
+  "email": "client@example.com"
+}
 ```
 
-## Contributing
+### Emotion endpoints
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes
-4. Push to the branch (`git push origin feature/your-feature`)
-5. Open a Merge Request
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/api/emotions/create` | Create emotion and resolve sentiment externally |
+| `GET` | `/api/emotions/all` | List all emotions |
+| `DELETE` | `/api/emotions/delete/{id}` | Delete one emotion |
+
+Create emotion payload:
+
+```json
+{
+  "text": "I really like this product.",
+  "client": {
+    "email": "client@example.com"
+  }
+}
+```
+
+Note: `type` is no longer a required input field. The backend fills `type` and `score` from the sentiment provider response.
+
+## Frontend Routes
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/ui/client` | Entry page |
+| `POST` | `/ui/new/client` | Create client |
+| `GET` | `/ui/client/all` | Show all clients |
+| `GET` | `/ui/client/find?id={id}` | Show one client |
+| `GET` | `/ui/emotions` | Open create-emotion page |
+| `POST` | `/ui/emotions/create` | Submit emotion creation |
+| `GET` | `/ui/emotions/all` | Show all emotions |
+| `POST` | `/ui/emotions/delete` | Delete emotion by ID |
+
+## CI/CD Overview
+
+Pipeline stages (`.gitlab-ci.yml`):
+
+1. `prepare`
+2. `build`
+3. `test`
+4. `analyze`
+5. `security`
+6. `package`
+7. `deploy`
+8. `release`
+
+Job definitions are located in:
+
+- `pipeline/jobs/maven-build.gitlab-ci.yml`
+- `pipeline/jobs/test.gitlab-ci.yml`
+- `pipeline/jobs/analyze.gitlab-ci.yml`
+- `pipeline/jobs/security.gitlab-ci.yml`
+- `pipeline/jobs/package.gitlab-ci.yml`
+- `pipeline/jobs/deploy.gitlab-ci.yml`
+
+Container images are built with Jib in package jobs. Registry reachability depends on runner network access.
+
+## Troubleshooting
+
+- `502 Bad Gateway` with message about missing token:
+  - Set `SENTIMENT_API_TOKEN` in your run environment.
+- `502 Bad Gateway` with provider `404 Not Found`:
+  - Verify `sentiment.api.base-url` and `sentiment.api.model-path`.
+- Jib `Network is unreachable` in CI:
+  - Usually a runner-to-registry connectivity issue, not a Java build failure.
 
 ## License
 

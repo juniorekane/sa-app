@@ -8,7 +8,7 @@ variables:
   image: $MVN_DEFAULT_IMAGE
   needs:
     - job: build
-      artifacts: true
+      artifacts: false
     - job: unit-tests
       artifacts: false
     - job: dependency-scan
