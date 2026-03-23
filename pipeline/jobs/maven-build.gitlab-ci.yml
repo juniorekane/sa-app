@@ -21,8 +21,7 @@ build:
   artifacts:
     expire_in: 1 day
     paths:
-      - "sa-app-api/target/*.jar"
-      - "sa-app-frontend/target/*.jar"
+      - "++/target/classes"
       - "pom.xml"
       - "**/pom.xml"
 
