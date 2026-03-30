@@ -29,3 +29,25 @@ deploy-api:
       when: manual
     - if: $CI_COMMIT_REF_PROTECTED == "true"
       when: manual
+
+deploy-frontend:
+  extends: .deploy-base
+  stage: deploy
+  environment:
+    name: production
+    url: https://frontend.jek-dev.com
+  needs:
+    - job: build-docker-frontend
+      artifacts: false
+  script:
+    - kubectl apply -f k8s/deployment.yml
+    - |
+      kubectl set image deployment/sa-app-frontend \
+        sa-app-frontend=$CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHA \
+        -n sa-app
+    - kubectl rollout status deployment/sa-app-frontend -n sa-app --timeout=300s
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_REF_PROTECTED == "true"
+      when: manual
