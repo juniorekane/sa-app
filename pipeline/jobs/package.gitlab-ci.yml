@@ -1,6 +1,6 @@
 variables:
   DOCKER_BUILD_IMAGE: "docker:latest"
-  TRIVY_IMAGE: "aquasec/trivy:latest"
+  TRIVY_IMAGE: "ghcr.io/aquasecurity/trivy:latest"
   MAVEN_OPTS: "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false"
 
 .docker-build-base:
