@@ -69,6 +69,8 @@ spec:
       containers:
         - name: mariadb
           image: mariadb:11.4
+          securityContext:
+            allowPrivilegeEscalation: false
           ports:
             - containerPort: 3306
               name: mysql
@@ -157,6 +159,8 @@ spec:
         - name: sa-app-api
           image: registry.jek-dev.com/junior/sa-app/api:latest
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
           ports:
             - containerPort: 8080
               name: http
@@ -239,6 +243,8 @@ spec:
         - name: sa-app-frontend
           image: registry.jek-dev.com/junior/sa-app/frontend:latest
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
           ports:
             - containerPort: 8080
               name: http
