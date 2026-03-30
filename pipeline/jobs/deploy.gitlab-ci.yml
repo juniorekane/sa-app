@@ -3,9 +3,7 @@
     name: bitnami/kubectl:latest
     entrypoint: [""]
   before_script:
-    - mkdir -p ~/.kube
-    - echo "$KUBECONFIG_CONTENT" | base64 -d > ~/.kube/config
-    - chmod 600 ~/.kube/config
+    - export KUBECONFIG="$KUBECONFIG_FILE"
     - kubectl cluster-info
 
 deploy-api:
