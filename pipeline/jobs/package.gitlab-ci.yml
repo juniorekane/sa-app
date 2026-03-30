@@ -1,6 +1,6 @@
 variables:
   DOCKER_BUILD_IMAGE: "docker:latest"
-  TRIVY_IMAGE: "aquasec/trivy:latest"
+  TRIVY_IMAGE: "ghcr.io/aquasecurity/trivy:latest"
   MAVEN_OPTS: "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false"
 
 .docker-build-base:
@@ -46,19 +46,23 @@ build-docker-frontend:
 
 container-scan-api:
   stage: package
-  image: $TRIVY_IMAGE
+  image:
+    name: $TRIVY_IMAGE
+    entrypoint: [""]
   needs:
     - job: build-docker-api
       artifacts: false
   script:
-    - trivy image --exit-code 1 --severity HIGH,CRITICAL $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - trivy image --exit-code 1 --severity HIGH,CRITICAL $CI_REGISTRY_IMAGE/api:$CI_COMMIT_SHA
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   allow_failure: true
 
 container-scan-frontend:
   stage: package
-  image: $TRIVY_IMAGE
+  image:
+    name: $TRIVY_IMAGE
+    entrypoint: [""]
   needs:
     - job: build-docker-frontend
       artifacts: false
