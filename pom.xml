@@ -60,6 +60,10 @@
 
         <!-- utilities dependencies -->
         <version.lombok>1.18.42</version.lombok>
+
+        <!-- fix vulnerabilities - version overrides -->
+        <tomcat.version>11.0.18</tomcat.version>
+        <jackson-bom.version>3.1.0</jackson-bom.version>
     </properties>
 
     <dependencyManagement>
@@ -118,6 +122,11 @@
             </dependency>
 
             <!-- fix vulnerabilities -->
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>4.0.3</version>
+            </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
