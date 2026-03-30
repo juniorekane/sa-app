@@ -63,7 +63,6 @@
 
         <!-- fix vulnerabilities - version overrides -->
         <tomcat.version>11.0.18</tomcat.version>
-        <jackson-bom.version>3.1.0</jackson-bom.version>
         <version.plexus-utils>4.0.3</version.plexus-utils>
         <version.commons-io>2.21.0</version.commons-io>
         <version.snappy>0.5</version.snappy>
