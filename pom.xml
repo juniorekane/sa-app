@@ -64,6 +64,13 @@
         <!-- fix vulnerabilities - version overrides -->
         <tomcat.version>11.0.18</tomcat.version>
         <jackson-bom.version>3.1.0</jackson-bom.version>
+        <version.plexus-utils>4.0.3</version.plexus-utils>
+        <version.commons-io>2.21.0</version.commons-io>
+        <version.snappy>0.5</version.snappy>
+        <version.commons-lang3>3.20.0</version.commons-lang3>
+        <version.assertj-core>3.27.7</version.assertj-core>
+        <version.logback-classic>1.5.25</version.logback-classic>
+        <version.logback-core>1.5.25</version.logback-core>
     </properties>
 
     <dependencyManagement>
@@ -125,37 +132,37 @@
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
-                <version>4.0.3</version>
+                <version>${version.plexus-utils}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.21.0</version>
+                <version>${version.commons-io}}</version>
             </dependency>
             <dependency>
                 <groupId>org.iq80.snappy</groupId>
                 <artifactId>snappy</artifactId>
-                <version>0.5</version>
+                <version>${version.snappy}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.20.0</version>
+                <version>${version.commons-lang3}</version>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.27.7</version>
+                <version>${version.assertj-core}</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.5.25</version>
+                <version>${version.logback-classic}</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.5.25</version>
+                <version>${version.logback-core}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
